@@ -17,7 +17,6 @@ const dropdown = ref(false);
 const reviews = ref([]);
 const summaries = ref([]);
 
-
 const username = localStorage.getItem("username");
 const email = localStorage.getItem("email");
 const role = localStorage.getItem("role");
@@ -27,14 +26,18 @@ function toggleDropdown() {
 }
 
 const showNotifications = ref(false);
-const notifications = ref(["Notification 1", "Notification 2", "Notification 3"]);
+const notifications = ref([
+  "Notification 1",
+  "Notification 2",
+  "Notification 3",
+]);
 let unseenNotifications = ref(0);
 
 function toggleNotifications() {
   showNotifications.value = !showNotifications.value;
   if (showNotifications.value) {
     unseenNotifications.value = 0;
-    localStorage.setItem('unseenNotifications', JSON.stringify(0));
+    localStorage.setItem("unseenNotifications", JSON.stringify(0));
   }
 }
 
@@ -42,24 +45,28 @@ function addNotification(notification) {
   notifications.value.push(notification);
   if (!showNotifications.value) {
     unseenNotifications.value++;
-    localStorage.setItem('unseenNotifications', JSON.stringify(unseenNotifications.value));
+    localStorage.setItem(
+      "unseenNotifications",
+      JSON.stringify(unseenNotifications.value)
+    );
   }
 }
 
-addNotification("sss")
+addNotification("sss");
 
 onMounted(() => {
-
   getreportsummary();
   getreportreview();
 
-  const storedUnseenNotifications = JSON.parse(localStorage.getItem('unseenNotifications'));
+  const storedUnseenNotifications = JSON.parse(
+    localStorage.getItem("unseenNotifications")
+  );
   if (storedUnseenNotifications !== null) {
     unseenNotifications.value = storedUnseenNotifications;
   }
   if (showNotifications.value) {
     unseenNotifications.value = 0;
-    localStorage.setItem('unseenNotifications', JSON.stringify(0));
+    localStorage.setItem("unseenNotifications", JSON.stringify(0));
   }
 });
 
@@ -116,7 +123,6 @@ const getreportreview = async () => {
     console.error("Error fetching review data");
   }
 };
-
 
 const signout = () => {
   localStorage.removeItem("username");
@@ -301,14 +307,29 @@ const Mycategory = () => {
           >
         </span>
 
-        <svg v-if="summaries.length > 0 || reviews.length > 0" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" class="ml-2">
-  <g id="Iconly_Bold_Info-Circle" data-name="Iconly/Bold/Info-Circle" transform="translate(-2 -1.999)">
-    <g id="Info-Circle" transform="translate(2 1.999)">
-      <path id="Path_199" data-name="Path 199" d="M10,0A10,10,0,1,1,0,10,10,10,0,0,1,10,0Zm0,12.931a.871.871,0,0,0-.87.87.875.875,0,1,0,.87-.87Zm0-7.6a.888.888,0,0,0-.88.88h0v4.42a.875.875,0,0,0,1.75,0h0V6.21A.88.88,0,0,0,10,5.33Z" fill="#c61d1e"/>
-    </g>
-  </g>
-</svg>
-
+        <svg
+          v-if="summaries.length > 0 || reviews.length > 0"
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 20 20"
+          class="ml-24 absolute"
+        >
+          <g
+            id="Iconly_Bold_Info-Circle"
+            data-name="Iconly/Bold/Info-Circle"
+            transform="translate(-2 -1.999)"
+          >
+            <g id="Info-Circle" transform="translate(2 1.999)">
+              <path
+                id="Path_199"
+                data-name="Path 199"
+                d="M10,0A10,10,0,1,1,0,10,10,10,0,0,1,10,0Zm0,12.931a.871.871,0,0,0-.87.87.875.875,0,1,0,.87-.87Zm0-7.6a.888.888,0,0,0-.88.88h0v4.42a.875.875,0,0,0,1.75,0h0V6.21A.88.88,0,0,0,10,5.33Z"
+                fill="#c61d1e"
+              />
+            </g>
+          </g>
+        </svg>
       </li>
     </ul>
 
@@ -392,7 +413,6 @@ const Mycategory = () => {
         <span class="badge flex inline-center" v-if="unseenNotifications > 0">{{
           unseenNotifications
         }}</span>
-        
       </div>
 
       <img
@@ -440,7 +460,8 @@ const Mycategory = () => {
     <div class="py-1" role="none">
       <a
         class="text-gray-700 block w-10 text-sm font-light flex items-center"
-        v-for="no in notifications">
+        v-for="no in notifications"
+      >
         <!-- <svg
           style="margin-right: 13px; width: 18px"
           xmlns="http://www.w3.org/2000/svg"
@@ -466,8 +487,6 @@ const Mycategory = () => {
         {{ no }}
       </a>
     </div>
-
-    
   </div>
 
   <div
@@ -776,7 +795,6 @@ ul li:hover span {
   background-color: white;
   padding: 10px;
 }
-
 
 .bell {
   /* margin-right: -20px; */
