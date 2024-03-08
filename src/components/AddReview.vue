@@ -130,8 +130,13 @@ const selectedCourseName = ref("");
 const isDropdownOpen = ref(false);
 
 const toggleDropdown = () => {
-  isDropdownOpen.value = true;
+  if (isDropdownOpen.value) {
+    isDropdownOpen.value = false;
+  } else {
+    isDropdownOpen.value = true;
+  }
 };
+
 
 const hideDropdown = () => {
   setTimeout(() => {

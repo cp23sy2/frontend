@@ -25,49 +25,93 @@ function toggleDropdown() {
   dropdown.value = !dropdown.value;
 }
 
-const showNotifications = ref(false);
-const notifications = ref([
-  "Notification 1",
-  "Notification 2",
-  "Notification 3",
-]);
-let unseenNotifications = ref(0);
+const notifications = ref([]);
+const showBadge = ref(false);
+const showPopup = ref(false);
+const newNotificationText = ref("");
+const badgeCount = ref(0);
 
-function toggleNotifications() {
-  showNotifications.value = !showNotifications.value;
-  if (showNotifications.value) {
-    unseenNotifications.value = 0;
-    localStorage.setItem("unseenNotifications", JSON.stringify(0));
+let readNotifications =
+  JSON.parse(localStorage.getItem("readNotifications")) || [];
+
+const handleNotificationClick = () => {
+  showPopup.value = !showPopup.value;
+  showBadge.value = false;
+  localStorage.setItem("showBadge", false);
+  notifications.value.forEach((notification) => {
+    if (!readNotifications.includes(notification)) {
+      readNotifications.push(notification);
+    }
+  });
+  localStorage.setItem("readNotifications", JSON.stringify(readNotifications));
+};
+
+const addNotification = (notification) => {
+  const previousNotifications = JSON.parse(
+    localStorage.getItem("notifications")
+  );
+  if (!previousNotifications || !previousNotifications.includes(notification)) {
+    notifications.value.push(notification);
+    localStorage.setItem("notifications", JSON.stringify(notifications.value));
+    updateBadgeState();
+    showPopup.value = false;
+    location.reload();
   }
-}
+};
 
-function addNotification(notification) {
-  notifications.value.push(notification);
-  if (!showNotifications.value) {
-    unseenNotifications.value++;
-    localStorage.setItem(
-      "unseenNotifications",
-      JSON.stringify(unseenNotifications.value)
+const updateBadgeState = () => {
+  const previousNotifications = JSON.parse(
+    localStorage.getItem("notifications")
+  );
+  if (previousNotifications && previousNotifications.length > 0) {
+    const newNotifications = notifications.value.filter(
+      (notification) => !previousNotifications.includes(notification)
     );
+    if (newNotifications.length > 0) {
+      showBadge.value = true;
+      badgeCount.value = newNotifications.length;
+    }
   }
-}
+};
 
-addNotification("sss");
+onMounted(() => {
+  const previousNotifications = JSON.parse(
+    localStorage.getItem("notifications")
+  );
+  if (previousNotifications && previousNotifications.length > 0) {
+    notifications.value = previousNotifications;
+    const unreadNotifications = notifications.value.filter(
+      (notification) => !readNotifications.includes(notification)
+    );
+    if (unreadNotifications.length === 0) {
+      showBadge.value = false;
+    } else {
+      showBadge.value = true;
+      badgeCount.value = unreadNotifications.length;
+    }
+  }
+});
+
+const addCustomNotification = () => {
+  if (newNotificationText.value.trim() !== "") {
+    addNotification(newNotificationText.value.trim());
+    newNotificationText.value = "";
+  }
+};
+
+const mockNotifications = [
+  "New message from John",
+  "Reminder: Meeting at 10 AM",
+  "You have 3 new emails",
+];
+
+mockNotifications.forEach((notification) => {
+  addNotification(notification);
+});
 
 onMounted(() => {
   getreportsummary();
   getreportreview();
-
-  const storedUnseenNotifications = JSON.parse(
-    localStorage.getItem("unseenNotifications")
-  );
-  if (storedUnseenNotifications !== null) {
-    unseenNotifications.value = storedUnseenNotifications;
-  }
-  if (showNotifications.value) {
-    unseenNotifications.value = 0;
-    localStorage.setItem("unseenNotifications", JSON.stringify(0));
-  }
 });
 
 const getreportsummary = async () => {
@@ -374,7 +418,11 @@ const Mycategory = () => {
     </div> -->
 
     <div class="dropdown">
-      <div @click="toggleNotifications" class="bell" v-if="role === 'st_group'">
+      <div
+        @click="handleNotificationClick"
+        class="bell"
+        v-if="role === 'st_group'"
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="50"
@@ -410,8 +458,8 @@ const Mycategory = () => {
           </g>
         </svg>
 
-        <span class="badge flex inline-center" v-if="unseenNotifications > 0">{{
-          unseenNotifications
+        <span v-if="showBadge" class="badge" v-show="badgeCount > 0">{{
+          badgeCount
         }}</span>
       </div>
 
@@ -454,39 +502,23 @@ const Mycategory = () => {
   </section>
 
   <div
-    v-if="showNotifications"
-    class="notification-popup absolute right-44 z-40 mt-2 w-58 rounded-lg divide-y divide-gray-100 bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+    v-if="showPopup"
+    class="notification-popup mt-2 right-44 z-40 rounded-lg divide-y divide-gray-100 bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
   >
-    <div class="py-1" role="none">
-      <a
-        class="text-gray-700 block w-10 text-sm font-light flex items-center"
-        v-for="no in notifications"
-      >
-        <!-- <svg
-          style="margin-right: 13px; width: 18px"
-          xmlns="http://www.w3.org/2000/svg"
-          width="15.84"
-          height="19.87"
-          viewBox="0 0 15.84 19.87"
-        >
-          <g
-            id="Iconly_Light-Outline_Profile"
-            data-name="Iconly/Light-Outline/Profile"
-            transform="translate(-4 -2)"
-          >
-            <g id="Profile" transform="translate(4 2)">
-              <path
-                id="Combined-Shape"
-                d="M15.84,16.193c0,3.3-4.52,3.677-7.919,3.677H7.678C5.512,19.865,0,19.728,0,16.173c0-3.229,4.338-3.66,7.711-3.677h.453C10.33,12.5,15.84,12.638,15.84,16.193ZM7.921,14C3.66,14,1.5,14.728,1.5,16.173s2.16,2.2,6.421,2.2,6.419-.732,6.419-2.177S12.181,14,7.921,14Zm0-14a5.31,5.31,0,0,1,0,10.619H7.889A5.31,5.31,0,0,1,7.921,0Zm0,1.428a3.882,3.882,0,0,0-.029,7.764l.029.714V9.192a3.882,3.882,0,0,0,0-7.764Z"
-                fill-rule="evenodd"
-                fill="#4A5568"
-              />
-            </g>
-          </g>
-        </svg> -->
-        {{ no }}
-      </a>
-    </div>
+    <a
+      class="noti_block text-gray-700 text-sm font-light "
+      v-for="(notification, index) in notifications"
+      :key="index"
+    >
+      {{ notification }}
+    </a>
+
+    <input
+      type="text"
+      v-model="newNotificationText"
+      placeholder="Enter notification text"
+    />
+    <button @click="addCustomNotification">Add Notification</button>
   </div>
 
   <div
@@ -518,7 +550,8 @@ const Mycategory = () => {
             </g>
           </g>
         </svg>
-        {{ username }}
+        {{ username }} 
+
 
         <div class="role">
           {{
@@ -630,9 +663,9 @@ const Mycategory = () => {
   ></div>
   <!-- backdrop-blur-sm -->
   <div
-    class="overlay fixed inset-0 bg-black bg-opacity-20 z-30"
-    @click="showNotifications = !showNotifications"
-    v-if="showNotifications"
+    class="overlay fixed inset-0 bg-white bg-opacity-0 z-30"
+    @click="handleNotificationClick"
+    v-if="showPopup"
   ></div>
 </template>
 
@@ -767,6 +800,33 @@ ul li:hover span {
   margin-left: auto;
 }
 
+/* สไตล์สำหรับ popup ของ notification */
+.notification-popup {
+  position: absolute;
+  overflow-y: auto; /* เลือกเฉพาะการเลื่อนแนวตั้ง */
+  overflow-x: hidden; /* ป้องกันการเลื่อนแนวนอน */
+  height: 205px;
+  width: 280px;
+  top: 80px;
+  background-color: white;
+  /* padding: 10px; */
+}
+
+.bell {
+  /* margin-right: -20px; */
+  /* margin-left: 20px; */
+  position: absolute;
+  margin-left: -110px;
+  margin-top: 15px;
+  width: 30px;
+  height: 30px;
+ /* background-color: #4675c0; */
+}
+
+.bell:hover{
+  opacity: 0.5;
+}
+
 .badge {
   background-color: red;
   color: white;
@@ -784,22 +844,20 @@ ul li:hover span {
   right: 0; */
 }
 
-/* สไตล์สำหรับ popup ของ notification */
-.notification-popup {
-  position: absolute;
-  overflow-y: auto; /* เลือกเฉพาะการเลื่อนแนวตั้ง */
-  overflow-x: hidden; /* ป้องกันการเลื่อนแนวนอน */
-  height: 205px;
-  width: 250px;
-  top: 80px;
-  background-color: white;
-  padding: 10px;
-}
-
-.bell {
-  /* margin-right: -20px; */
-  /* margin-left: 20px; */
-  position: absolute;
-  margin-left: -110px;
+.noti_block {
+  margin-top: 15px;
+  margin-left: 15px;
+  margin-right: 15px;
+  margin-bottom: -3px;
+  /* width: 200px; */
+  border-radius: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  background: #f6f6f6 0% 0% no-repeat padding-box;
+  display: block;
+  overflow: hidden;
+  word-wrap: break-word;
 }
 </style>

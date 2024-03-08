@@ -646,7 +646,15 @@ const Login = () => appRouter.push({ name: "login" });
               <!-- {{
                 moment(review.fileCreatedOn).locale("th").format("DD MMMM YYYY")
               }} -->
-              {{ moment(review.reviewCreatedOn).locale("th").fromNow() }}
+              <!-- {{ moment(review.reviewCreatedOn).locale("th").fromNow() }} -->
+
+              {{
+                moment(review.reviewCreatedOn).diff(moment(), "days") > -7
+                  ? moment(review.reviewCreatedOn).locale("th").fromNow()
+                  : moment(review.reviewCreatedOn)
+                      .locale("th")
+                      .format("DD MMMM YYYY")
+              }}
             </span>
           </p>
         </div>

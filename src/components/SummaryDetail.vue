@@ -33,7 +33,7 @@ const hideSuccess = () => {
   showSuccess.value = false;
 };
 
-const showPopup = ref(null); 
+const showPopup = ref(null);
 
 const togglePopup = (summaryId, shouldGetComments = true) => {
   if (showPopup.value === summaryId) {
@@ -45,8 +45,6 @@ const togglePopup = (summaryId, shouldGetComments = true) => {
     }
   }
 };
-
-
 
 // const isPopupVisible = ref(false);
 
@@ -442,16 +440,16 @@ const deleteSummary = async (id, index) => {
 
       // setTimeout(function () {
       //   summarys.value = summarys.value.filter((e) => e.idCourse_File !== id);
-      // }, 500);   
-      
+      // }, 500);
+
       setTimeout(function () {
-        const indexToDelete = summarys.value.findIndex((e) => e.idCourse_File === id);
+        const indexToDelete = summarys.value.findIndex(
+          (e) => e.idCourse_File === id
+        );
         if (indexToDelete !== -1) {
           summarys.value.splice(indexToDelete, 1);
         }
       }, 500);
-
-
     } else console.log("cannot delete");
   }
 };
@@ -544,6 +542,7 @@ const Login = () => appRouter.push({ name: "login" });
         </span>
       </span>
     </div>
+    
 
     <!-- ส่วนของ filter  -->
     <div class="search">
@@ -763,15 +762,15 @@ const Login = () => appRouter.push({ name: "login" });
           <span class="username">
             {{ summary.emailOwner.slice(0, 5) }}
             <div class="dot"></div>
-            {{ moment(summary.fileCreatedOn).locale("th").fromNow() }}
+            <!-- {{ moment(summary.fileCreatedOn).locale("th").fromNow() }} -->
 
-            <!-- {{
+            {{
               moment(summary.fileCreatedOn).diff(moment(), "days") > -7
                 ? moment(summary.fileCreatedOn).locale("th").fromNow()
                 : moment(summary.fileCreatedOn)
                     .locale("th")
                     .format("DD MMMM YYYY")
-            }} -->
+            }}
           </span>
         </div>
 
@@ -821,7 +820,10 @@ const Login = () => appRouter.push({ name: "login" });
         </div>
 
         <!-- comment popup -->
-        <div v-if="showPopup === summary.idCourse_File" class="popup-container bg-black bg-opacity-20 backdrop-blur-sm" >
+        <div
+          v-if="showPopup === summary.idCourse_File"
+          class="popup-container bg-black bg-opacity-20 backdrop-blur-sm"
+        >
           <div class="popup">
             <div class="popup-content">
               <div v-if="commentofsummary.length > 0">
@@ -901,8 +903,21 @@ const Login = () => appRouter.push({ name: "login" });
                           .format("DD MMMM YYYY")
                       }} -->
 
-                      {{
+                      <!-- {{
                         moment(comment.commentCreatedOn).locale("th").fromNow()
+                      }}  -->
+
+                      {{
+                        moment(comment.commentCreatedOn).diff(
+                          moment(),
+                          "days"
+                        ) > -7
+                          ? moment(comment.commentCreatedOn)
+                              .locale("th")
+                              .fromNow()
+                          : moment(comment.commentCreatedOn)
+                              .locale("th")
+                              .format("DD MMMM YYYY")
                       }} </span
                     ><br /><br />
                     <div class="detail-comment-box">
@@ -1093,7 +1108,10 @@ const Login = () => appRouter.push({ name: "login" });
             </div>
 
             <!-- Close Button -->
-              <div class="close-button" @click="togglePopup(summary.idCourse_File, false)">
+            <div
+              class="close-button"
+              @click="togglePopup(summary.idCourse_File, false)"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20.426"
@@ -1203,129 +1221,129 @@ const Login = () => appRouter.push({ name: "login" });
     <div v-else>
       <div class="no-review" v-if="showNoData">
         <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="44.653"
-            height="59.234"
-            viewBox="0 0 44.653 59.234"
-            class="notfound"
-          >
-            <g id="Exp-2.-F" transform="translate(-9.673 -2.383)">
+          xmlns="http://www.w3.org/2000/svg"
+          width="44.653"
+          height="59.234"
+          viewBox="0 0 44.653 59.234"
+          class="notfound"
+        >
+          <g id="Exp-2.-F" transform="translate(-9.673 -2.383)">
+            <path
+              id="Path_19725"
+              data-name="Path 19725"
+              d="M51.791,24.617h-37a3,3,0,0,0-3,3v6h40Z"
+              fill="#a4bbdb"
+              fill-rule="evenodd"
+            />
+            <path
+              id="Path_19726"
+              data-name="Path 19726"
+              d="M11.791,28.3h40v1.863h-40Z"
+              fill="#8da3be"
+              fill-rule="evenodd"
+            />
+            <path
+              id="Path_19727"
+              data-name="Path 19727"
+              d="M51.791,23.7a3,3,0,0,0-3-3H36.153a3,3,0,0,0-2.842,2.04C32.733,24.449,32,26.617,32,26.617H51.791Z"
+              fill="#a4bbdb"
+              fill-rule="evenodd"
+            />
+            <path
+              id="Path_19728"
+              data-name="Path 19728"
+              d="M54.279,34.234a4,4,0,0,0-3.953-4.617H13.674a4,4,0,0,0-3.953,4.617c1.018,6.512,2.85,18.238,3.75,24a4,4,0,0,0,3.953,3.383H46.576a4,4,0,0,0,3.953-3.383c.9-5.762,2.732-17.488,3.75-24Z"
+              fill="#cadcf0"
+              fill-rule="evenodd"
+            />
+            <path
+              id="Path_19729"
+              data-name="Path 19729"
+              d="M9.721,34.234l.513,3.28a4.04,4.04,0,0,1,.976-3.219,4,4,0,0,1,3.039-1.4h35.5a4,4,0,0,1,3.039,1.4,4.04,4.04,0,0,1,.976,3.219l.513-3.28a4,4,0,0,0-3.953-4.617H13.674a4,4,0,0,0-3.953,4.617Z"
+              fill="#e9f3fc"
+              fill-rule="evenodd"
+            />
+            <g id="Group_29522" data-name="Group 29522">
               <path
-                id="Path_19725"
-                data-name="Path 19725"
-                d="M51.791,24.617h-37a3,3,0,0,0-3,3v6h40Z"
-                fill="#a4bbdb"
+                id="Path_19730"
+                data-name="Path 19730"
+                d="M29.715,53.464a2,2,0,0,0-2-2h-8a2,2,0,0,0-2,2v2a2,2,0,0,0,2,2h8a2,2,0,0,0,2-2Z"
+                fill="#4675c0"
                 fill-rule="evenodd"
               />
               <path
-                id="Path_19726"
-                data-name="Path 19726"
-                d="M11.791,28.3h40v1.863h-40Z"
-                fill="#8da3be"
+                id="Path_19731"
+                data-name="Path 19731"
+                d="M23.557,25.826a5.277,5.277,0,0,1-.064-.834,1,1,0,1,0-2-.008,7.1,7.1,0,0,0,.089,1.153,1,1,0,0,0,1.975-.311Z"
+                fill="#4675c0"
                 fill-rule="evenodd"
               />
               <path
-                id="Path_19727"
-                data-name="Path 19727"
-                d="M51.791,23.7a3,3,0,0,0-3-3H36.153a3,3,0,0,0-2.842,2.04C32.733,24.449,32,26.617,32,26.617H51.791Z"
-                fill="#a4bbdb"
+                id="Path_19732"
+                data-name="Path 19732"
+                d="M24.607,21.993a5.329,5.329,0,0,1,.66-.648A1,1,0,0,0,23.992,19.8a7.373,7.373,0,0,0-.908.892,1,1,0,0,0,1.523,1.3Z"
+                fill="#4675c0"
                 fill-rule="evenodd"
               />
               <path
-                id="Path_19728"
-                data-name="Path 19728"
-                d="M54.279,34.234a4,4,0,0,0-3.953-4.617H13.674a4,4,0,0,0-3.953,4.617c1.018,6.512,2.85,18.238,3.75,24a4,4,0,0,0,3.953,3.383H46.576a4,4,0,0,0,3.953-3.383c.9-5.762,2.732-17.488,3.75-24Z"
-                fill="#cadcf0"
+                id="Path_19733"
+                data-name="Path 19733"
+                d="M28.376,19.9a10.683,10.683,0,0,1,1.277-.2,1,1,0,0,0-.2-1.99,12.635,12.635,0,0,0-1.516.243,1,1,0,1,0,.438,1.951Z"
+                fill="#4675c0"
                 fill-rule="evenodd"
               />
               <path
-                id="Path_19729"
-                data-name="Path 19729"
-                d="M9.721,34.234l.513,3.28a4.04,4.04,0,0,1,.976-3.219,4,4,0,0,1,3.039-1.4h35.5a4,4,0,0,1,3.039,1.4,4.04,4.04,0,0,1,.976,3.219l.513-3.28a4,4,0,0,0-3.953-4.617H13.674a4,4,0,0,0-3.953,4.617Z"
-                fill="#e9f3fc"
-                fill-rule="evenodd"
-              />
-              <g id="Group_29522" data-name="Group 29522">
-                <path
-                  id="Path_19730"
-                  data-name="Path 19730"
-                  d="M29.715,53.464a2,2,0,0,0-2-2h-8a2,2,0,0,0-2,2v2a2,2,0,0,0,2,2h8a2,2,0,0,0,2-2Z"
-                  fill="#4675c0"
-                  fill-rule="evenodd"
-                />
-                <path
-                  id="Path_19731"
-                  data-name="Path 19731"
-                  d="M23.557,25.826a5.277,5.277,0,0,1-.064-.834,1,1,0,1,0-2-.008,7.1,7.1,0,0,0,.089,1.153,1,1,0,0,0,1.975-.311Z"
-                  fill="#4675c0"
-                  fill-rule="evenodd"
-                />
-                <path
-                  id="Path_19732"
-                  data-name="Path 19732"
-                  d="M24.607,21.993a5.329,5.329,0,0,1,.66-.648A1,1,0,0,0,23.992,19.8a7.373,7.373,0,0,0-.908.892,1,1,0,0,0,1.523,1.3Z"
-                  fill="#4675c0"
-                  fill-rule="evenodd"
-                />
-                <path
-                  id="Path_19733"
-                  data-name="Path 19733"
-                  d="M28.376,19.9a10.683,10.683,0,0,1,1.277-.2,1,1,0,0,0-.2-1.99,12.635,12.635,0,0,0-1.516.243,1,1,0,1,0,.438,1.951Z"
-                  fill="#4675c0"
-                  fill-rule="evenodd"
-                />
-                <path
-                  id="Path_19734"
-                  data-name="Path 19734"
-                  d="M33.495,19.694c.61.016,1.189.011,1.741-.012a1,1,0,0,0-.084-2q-.763.031-1.606.011a1,1,0,1,0-.051,2Z"
-                  fill="#4675c0"
-                  fill-rule="evenodd"
-                />
-                <path
-                  id="Path_19735"
-                  data-name="Path 19735"
-                  d="M39.368,19.055a11.383,11.383,0,0,0,1.749-.66,1,1,0,0,0-.866-1.8,9.447,9.447,0,0,1-1.441.543,1,1,0,0,0,.558,1.92Z"
-                  fill="#4675c0"
-                  fill-rule="evenodd"
-                />
-                <path
-                  id="Path_19736"
-                  data-name="Path 19736"
-                  d="M44.122,15.939a6.171,6.171,0,0,0,.962-2.144,1,1,0,1,0-1.947-.456,4.186,4.186,0,0,1-.653,1.452,1,1,0,1,0,1.638,1.148Z"
-                  fill="#4675c0"
-                  fill-rule="evenodd"
-                />
-                <path
-                  id="Path_19737"
-                  data-name="Path 19737"
-                  d="M44.715,9.783a5.751,5.751,0,0,0-1.961-2.471,1,1,0,1,0-1.136,1.646,3.737,3.737,0,0,1,1.259,1.614,1,1,0,1,0,1.838-.789Z"
-                  fill="#4675c0"
-                  fill-rule="evenodd"
-                />
-              </g>
-              <path
-                id="Path_19738"
-                data-name="Path 19738"
-                d="M31.891,6.831c1.082-6.127,10.459-5.731,5,0Z"
-                fill="#cadcf0"
+                id="Path_19734"
+                data-name="Path 19734"
+                d="M33.495,19.694c.61.016,1.189.011,1.741-.012a1,1,0,0,0-.084-2q-.763.031-1.606.011a1,1,0,1,0-.051,2Z"
+                fill="#4675c0"
                 fill-rule="evenodd"
               />
               <path
-                id="Path_19739"
-                data-name="Path 19739"
-                d="M31.891,8.383c1.082,6.126,10.459,5.731,5,0Z"
-                fill="#cadcf0"
+                id="Path_19735"
+                data-name="Path 19735"
+                d="M39.368,19.055a11.383,11.383,0,0,0,1.749-.66,1,1,0,0,0-.866-1.8,9.447,9.447,0,0,1-1.441.543,1,1,0,0,0,.558,1.92Z"
+                fill="#4675c0"
                 fill-rule="evenodd"
               />
               <path
-                id="Path_19740"
-                data-name="Path 19740"
-                d="M31.8,8.617h6.7a1,1,0,0,0,0-2H31.8a1,1,0,1,0,0,2Z"
+                id="Path_19736"
+                data-name="Path 19736"
+                d="M44.122,15.939a6.171,6.171,0,0,0,.962-2.144,1,1,0,1,0-1.947-.456,4.186,4.186,0,0,1-.653,1.452,1,1,0,1,0,1.638,1.148Z"
+                fill="#4675c0"
+                fill-rule="evenodd"
+              />
+              <path
+                id="Path_19737"
+                data-name="Path 19737"
+                d="M44.715,9.783a5.751,5.751,0,0,0-1.961-2.471,1,1,0,1,0-1.136,1.646,3.737,3.737,0,0,1,1.259,1.614,1,1,0,1,0,1.838-.789Z"
                 fill="#4675c0"
                 fill-rule="evenodd"
               />
             </g>
-          </svg>
+            <path
+              id="Path_19738"
+              data-name="Path 19738"
+              d="M31.891,6.831c1.082-6.127,10.459-5.731,5,0Z"
+              fill="#cadcf0"
+              fill-rule="evenodd"
+            />
+            <path
+              id="Path_19739"
+              data-name="Path 19739"
+              d="M31.891,8.383c1.082,6.126,10.459,5.731,5,0Z"
+              fill="#cadcf0"
+              fill-rule="evenodd"
+            />
+            <path
+              id="Path_19740"
+              data-name="Path 19740"
+              d="M31.8,8.617h6.7a1,1,0,0,0,0-2H31.8a1,1,0,1,0,0,2Z"
+              fill="#4675c0"
+              fill-rule="evenodd"
+            />
+          </g>
+        </svg>
         <p>No Summary</p>
       </div>
     </div>

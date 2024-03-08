@@ -220,7 +220,6 @@ const hidesummary = async (id) => {
       if (currentReviewsCount === 1) {
         window.location.reload();
       }
-
     } else {
       showError.value = true;
     }
@@ -251,12 +250,11 @@ const hidereview = async (id) => {
     if (response.ok) {
       getreportreview();
       alert("ซ่อนข้อมูลสำเร็จ");
-      // window.location.reload(); 
+      // window.location.reload();
       const currentReviewsCount = reviews.value.length;
       if (currentReviewsCount === 1) {
         window.location.reload();
       }
-
     } else {
       showError.value = true;
     }
@@ -543,7 +541,14 @@ onBeforeMount(() => {
             <span class="username">
               {{ summary.emailOwner.slice(0, 5) }}
               <div class="dot"></div>
-              {{ moment(summary.fileCreatedOn).locale("th").fromNow() }}
+              <!-- {{ moment(summary.fileCreatedOn).locale("th").fromNow() }} -->
+              {{
+                moment(summary.fileCreatedOn).diff(moment(), "days") > -7
+                  ? moment(summary.fileCreatedOn).locale("th").fromNow()
+                  : moment(summary.fileCreatedOn)
+                      .locale("th")
+                      .format("DD MMMM YYYY")
+              }}
             </span>
           </div>
           <p class="filedescription">{{ summary.fileDescription }}</p>
@@ -663,12 +668,26 @@ onBeforeMount(() => {
                       <span class="username-comment">
                         {{ report.emailReportCourseFile.slice(0, 5) }}
                         <div class="dot"></div>
-                        {{
+                        <!-- {{
                           moment(report.reportCourseFileCreatedOn)
                             .locale("th")
                             .fromNow()
-                        }} </span
-                      ><br /><br />
+                        }}  -->
+                        {{
+                          moment(report.reportCourseFileCreatedOn).diff(
+                            moment(),
+                            "days"
+                          ) > -7
+                            ? moment(report.reportCourseFileCreatedOn)
+                                .locale("th")
+                                .fromNow()
+                            : moment(report.reportCourseFileCreatedOn)
+                                .locale("th")
+                                .format("DD MMMM YYYY")
+                        }}
+                      </span>
+
+                      <br /><br />
                       <div
                         class="detail-comment-box"
                         v-if="report.inappropriateCourseFile === true"
@@ -1062,7 +1081,15 @@ onBeforeMount(() => {
               <span class="username_review">
                 {{ review.emailOwner.slice(0, 5) }}
                 <div class="dot_review"></div>
-                {{ moment(review.reviewCreatedOn).locale("th").fromNow() }}
+                <!-- {{ moment(review.reviewCreatedOn).locale("th").fromNow() }} -->
+
+                {{
+                  moment(review.reviewCreatedOn).diff(moment(), "days") > -7
+                    ? moment(review.reviewCreatedOn).locale("th").fromNow()
+                    : moment(review.reviewCreatedOn)
+                        .locale("th")
+                        .format("DD MMMM YYYY")
+                }}
 
                 <!-- {{
                   moment(review.fileCreatedOn)
@@ -1196,7 +1223,7 @@ onBeforeMount(() => {
                         class="detail-comment-box"
                         v-if="report.notMatchReview === true"
                       >
-                      <span
+                        <span
                           class="bg-yellow-100 text-yellow-600 text-xs font-small me-2 px-2.5 py-0.5 rounded-md border border-yellow-400 pt-1 pb-1 pl-3 pr-3"
                           >เนื้อหาไม่ตรงกับรายวิชา</span
                         >

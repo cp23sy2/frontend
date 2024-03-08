@@ -73,8 +73,7 @@ const setPageReview = (page) => {
   }
 };
 
-
-const showPopup = ref(null); 
+const showPopup = ref(null);
 
 const togglePopup = (summaryId, shouldGetComments = true) => {
   if (showPopup.value === summaryId) {
@@ -210,11 +209,11 @@ const getsummary = async () => {
     if (response.status === 200) {
       const data = await response.json();
       // summarys.value = data;
-      summarys.value = data.filter(summary => !summary.hide);
+      summarys.value = data.filter((summary) => !summary.hide);
     }
     if (response.status === 401) {
       signout();
-    } 
+    }
   } catch (error) {
     console.error("Error fetching summary data:", error);
   }
@@ -236,7 +235,7 @@ const getreview = async () => {
     if (response.status === 200) {
       const data = await response.json();
       // reviews.value = data;
-      reviews.value = data.filter(review => !review.hide);
+      reviews.value = data.filter((review) => !review.hide);
     } else {
       console.error("Get Review failed");
     }
@@ -661,7 +660,15 @@ const Login = () => appRouter.push({ name: "login" });
             <span class="username">
               {{ summary.emailOwner.slice(0, 5) }}
               <div class="dot"></div>
-              {{ moment(summary.fileCreatedOn).locale("th").fromNow() }}
+              <!-- {{ moment(summary.fileCreatedOn).locale("th").fromNow() }} -->
+
+              {{
+                moment(summary.fileCreatedOn).diff(moment(), "days") > -7
+                  ? moment(summary.fileCreatedOn).locale("th").fromNow()
+                  : moment(summary.fileCreatedOn)
+                      .locale("th")
+                      .format("DD MMMM YYYY")
+              }}
 
               <!-- {{
                 moment(summary.fileCreatedOn)
@@ -716,7 +723,10 @@ const Login = () => appRouter.push({ name: "login" });
           </div>
 
           <!-- comment popup -->
-          <div v-if="showPopup === summary.id" class="popup-container bg-black bg-opacity-20 backdrop-blur-sm">
+          <div
+            v-if="showPopup === summary.id"
+            class="popup-container bg-black bg-opacity-20 backdrop-blur-sm"
+          >
             <div class="popup">
               <div class="popup-content">
                 <div v-if="commentofsummary.length > 0">
@@ -794,18 +804,31 @@ const Login = () => appRouter.push({ name: "login" });
                       <span class="username-comment">
                         {{ comment.emailOwner.slice(0, 5) }}
                         <div class="dot"></div>
-                        {{
+                        <!-- {{
                           moment(comment.commentCreatedOn)
                             .locale("th")
                             .fromNow()
+                        }} -->
+
+                        {{
+                          moment(comment.commentCreatedOn).diff(
+                            moment(),
+                            "days"
+                          ) > -7
+                            ? moment(comment.commentCreatedOn)
+                                .locale("th")
+                                .fromNow()
+                            : moment(comment.commentCreatedOn)
+                                .locale("th")
+                                .format("DD MMMM YYYY")
                         }}
 
                         <!-- {{
                           moment(summary.fileCreatedOn)
                             .locale("th")
                             .format("DD MMMM YYYY")
-                        }} -->
-                      </span><br><br>
+                        }} --> </span
+                      ><br /><br />
                       <div class="detail-comment-box">
                         {{ comment.commentDetail }}
                       </div>
@@ -991,7 +1014,10 @@ const Login = () => appRouter.push({ name: "login" });
               </div>
 
               <!-- Close Button -->
-              <div class="close-button"  @click="togglePopup(summary.idCourse_File, false)">
+              <div
+                class="close-button"
+                @click="togglePopup(summary.idCourse_File, false)"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="20.426"
@@ -1496,7 +1522,15 @@ const Login = () => appRouter.push({ name: "login" });
               <span class="username_review">
                 {{ review.emailOwner.slice(0, 5) }}
                 <div class="dot_review"></div>
-                {{ moment(review.reviewCreatedOn).locale("th").fromNow() }}
+                <!-- {{ moment(review.reviewCreatedOn).locale("th").fromNow() }} -->
+
+                {{
+                  moment(review.reviewCreatedOn).diff(moment(), "days") > -7
+                    ? moment(review.reviewCreatedOn).locale("th").fromNow()
+                    : moment(review.reviewCreatedOn)
+                        .locale("th")
+                        .format("DD MMMM YYYY")
+                }}
 
                 <!-- {{
                   moment(review.fileCreatedOn)
