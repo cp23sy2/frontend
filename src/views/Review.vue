@@ -125,8 +125,11 @@ const getCategoryColor = (categoryName) => {
       return "#A698F0";
     case "INT":
       return "#B7DB92";
+    case "LNG":
+      return "#FF9F9F";
   }
 };
+
 
 const signout = () => {
   localStorage.removeItem("username");
@@ -236,6 +239,15 @@ const Login = () => appRouter.push({ name: "login" });
             >
               S
             </div>
+            <div
+              class="categoryname"
+              :style="{
+                backgroundColor: getCategoryColor(course.categoryName),
+              }"
+              v-if="course.categoryName === 'LNG'"
+            >
+              L
+            </div>
 
             <div class="course-detail">
               <h3 class="coursename">{{ course.courseName }}</h3>
@@ -246,6 +258,51 @@ const Login = () => appRouter.push({ name: "login" });
               <img src="../assets/score.png" class="credit-icon" />
               Credit : {{ course.courseCredit }}
             </div>
+
+            <!-- จำนวน post -->
+            <div
+              class="count_comment flex items-center"
+              :style="{
+                backgroundColor: getCategoryColor(course.categoryName),
+              }"
+              v-if="course.categoryName === 'GEN'"
+            >
+              <span>Post : {{ course.reviewsCount }}</span>
+            </div>
+
+            <div
+              class="count_comment flex items-center"
+              :style="{
+                backgroundColor: getCategoryColor(course.categoryName),
+              }"
+              v-if="course.categoryName === 'INT'"
+            >
+              <span>Post : {{ course.reviewsCount }}</span>
+            </div>
+
+            <div
+              class="count_comment flex items-center"
+              :style="{
+                backgroundColor: getCategoryColor(course.categoryName),
+              }"
+              v-if="course.categoryName === 'SSC'"
+            >
+              <span>Post : {{ course.reviewsCount }}</span>
+            </div>
+
+            <div
+              class="count_comment flex items-center"
+              :style="{
+                backgroundColor: getCategoryColor(course.categoryName),
+              }"
+              v-if="course.categoryName === 'LNG'"
+            >
+              <span>Post : {{ course.reviewsCount }}</span>
+            </div>
+
+
+
+
             <router-link
               :to="{ name: 'ReviewDetail', params: { courseid: course.id } }"
               ><div class="see-detail">
@@ -946,5 +1003,28 @@ margin-right: 10px; */
 .see-detail:hover {
   background-color: #2152a0;
   background: #c3daff 0% 0% no-repeat padding-box;
+}
+
+.count_comment {
+  letter-spacing: 0.8px;
+  color: #ffffff;
+  background-color: #b8bfd6;
+  font-weight: 900;
+  font-size: 12px;
+  width: auto;
+  height: 25px;
+  box-shadow: 0px 0px 15px #457aef0d;
+  /* border: 1px solid #697b98; */
+  border-radius: 10px;
+  position: absolute;
+  bottom: 203px;
+  right: 0;
+  width: auto;
+  padding-right: 15px;
+  padding-left: 15px;
+  height: 33px;
+  box-shadow: 0px 0px 15px #457aef0d;
+  border-radius: 0px 15px;
+  opacity: 1;
 }
 </style>

@@ -113,6 +113,7 @@ const handleSelectedOption = async (option) => {
       showSuccess.value = true;
       closePopup();
       setTimeout(() => {
+        fetchSummary();
         hideSuccess();
       }, 1500);
     } else {
@@ -289,6 +290,7 @@ const sendComment = async (index, summaryId) => {
         showSuccess.value = true;
         setTimeout(() => {
           hideSuccess();
+          fetchSummary();
         }, 1500);
       } else {
         console.error("Failed to post comment");
@@ -444,7 +446,7 @@ const deleteSummary = async (id, index) => {
 
       setTimeout(function () {
         const indexToDelete = summarys.value.findIndex(
-          (e) => e.idCourse_File === id
+          (e) => e.id === id
         );
         if (indexToDelete !== -1) {
           summarys.value.splice(indexToDelete, 1);
@@ -468,6 +470,7 @@ const deletecomment = async (id) => {
     );
     if (response.status === 200) {
       alert("Delete!!!", `You delete summary success`, "success");
+      fetchSummary();
 
       commentofsummary.value = commentofsummary.value.filter(
         (e) => e.id !== id
@@ -542,7 +545,6 @@ const Login = () => appRouter.push({ name: "login" });
         </span>
       </span>
     </div>
-    
 
     <!-- ส่วนของ filter  -->
     <div class="search">
@@ -600,7 +602,7 @@ const Login = () => appRouter.push({ name: "login" });
             <router-link
               :to="{
                 name: 'EditSummary',
-                params: { summaryid: summary.idCourse_File },
+                params: { summaryid: summary.id },
               }"
               tag="a"
               class="text-gray-700 block px-4 py-2.5 text-sm font-light flex items-center hover:bg-gray-100 dark dark:hover:bg-gray-200"
@@ -634,7 +636,7 @@ const Login = () => appRouter.push({ name: "login" });
             <a
               href="#"
               class="text-gray-700 block px-4 py-2.5 text-sm font-light flex items-center hover:bg-gray-100 dark dark:hover:bg-gray-200"
-              @click="() => deleteSummary(summary.idCourse_File, index)"
+              @click="() => deleteSummary(summary.id, index)"
               v-if="role === 'st_group' && summary.emailOwner === email"
             >
               <svg
@@ -665,7 +667,7 @@ const Login = () => appRouter.push({ name: "login" });
             <a
               href="#"
               class="text-gray-700 block px-4 py-2.5 text-sm font-light flex items-center hover:bg-gray-100 dark dark:hover:bg-gray-200"
-              @click="hidesummary(summary.idCourse_File)"
+              @click="hidesummary(summary.id)"
               v-if="role === 'staff_group'"
             >
               <svg
@@ -697,7 +699,7 @@ const Login = () => appRouter.push({ name: "login" });
               href="#"
               class="text-gray-700 block px-4 py-2.5 text-sm font-light flex items-center hover:bg-gray-100 dark dark:hover:bg-gray-200"
               v-if="role === 'st_group' && email !== summary.emailOwner"
-              @click="() => openPopupReport(summary.idCourse_File, index)"
+              @click="() => openPopupReport(summary.id, index)"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -798,7 +800,7 @@ const Login = () => appRouter.push({ name: "login" });
 
         <div
           class="count_comment flex items-center"
-          @click="togglePopup(summary.idCourse_File)"
+          @click="togglePopup(summary.id)"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -816,12 +818,14 @@ const Login = () => appRouter.push({ name: "login" });
               />
             </g>
           </svg>
-          <span class="text-sm font-light flex items-center">Comment</span>
+          <span class="text-sm font-light flex items-center">{{
+            summary.commentCount
+          }}</span>
         </div>
 
         <!-- comment popup -->
         <div
-          v-if="showPopup === summary.idCourse_File"
+          v-if="showPopup === summary.id"
           class="popup-container bg-black bg-opacity-20 backdrop-blur-sm"
         >
           <div class="popup">
@@ -1108,10 +1112,7 @@ const Login = () => appRouter.push({ name: "login" });
             </div>
 
             <!-- Close Button -->
-            <div
-              class="close-button"
-              @click="togglePopup(summary.idCourse_File, false)"
-            >
+            <div class="close-button" @click="togglePopup(summary.id, false)">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20.426"
@@ -1132,7 +1133,7 @@ const Login = () => appRouter.push({ name: "login" });
         <div class="box-comment-1" v-if="role === 'st_group'">
           <p class="line-comment"></p>
 
-          <form @submit.prevent="sendComment(index, summary.idCourse_File)">
+          <form @submit.prevent="sendComment(index, summary.id)">
             <div class="box-comment">
               <input
                 placeholder="แสดงความคิดเห็น . . ."
@@ -1833,7 +1834,7 @@ const Login = () => appRouter.push({ name: "login" });
   font-weight: 500;
   /* padding-left: 10px; */
   /* text-decoration: none; */
-  width: 130px;
+  width: auto;
   height: 35px;
   /* UI Properties */
   box-shadow: 0px 0px 15px #457aef0d;
@@ -1843,6 +1844,8 @@ const Login = () => appRouter.push({ name: "login" });
   float: right;
   margin-top: 20px;
   margin-right: 30px;
+  padding-left: 5px;
+  padding-right: 15px;
 }
 
 .count_comment:hover {

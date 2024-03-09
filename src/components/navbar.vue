@@ -2,6 +2,8 @@
 import { ref, onMounted, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
+import moment from "moment";
+
 
 const route = useRoute();
 
@@ -25,94 +27,129 @@ function toggleDropdown() {
   dropdown.value = !dropdown.value;
 }
 
+
 const notifications = ref([]);
+const counthidden = ref();
 const showBadge = ref(false);
 const showPopup = ref(false);
 const newNotificationText = ref("");
 const badgeCount = ref(0);
 
-let readNotifications =
-  JSON.parse(localStorage.getItem("readNotifications")) || [];
+let readSummaryNotifications = JSON.parse(localStorage.getItem("readSummaryNotifications")) || {};
+let readReviewNotifications = JSON.parse(localStorage.getItem("readReviewNotifications")) || {};
+const emailNotifications = { summary: [], review: [] };
 
 const handleNotificationClick = () => {
   showPopup.value = !showPopup.value;
   showBadge.value = false;
-  localStorage.setItem("showBadge", false);
+  badgeCount.value = 0; // Reset badge count when notifications are clicked
+
   notifications.value.forEach((notification) => {
-    if (!readNotifications.includes(notification)) {
-      readNotifications.push(notification);
+    if (notification.type === 'summary' && !readSummaryNotifications[notification.id]) {
+      readSummaryNotifications[notification.id] = true;
+    }
+    if (notification.type === 'review' && !readReviewNotifications[notification.id]) {
+      readReviewNotifications[notification.id] = true;
     }
   });
-  localStorage.setItem("readNotifications", JSON.stringify(readNotifications));
+
+  localStorage.setItem("readSummaryNotifications", JSON.stringify(readSummaryNotifications));
+  localStorage.setItem("readReviewNotifications", JSON.stringify(readReviewNotifications));
+  localStorage.setItem("notifications", JSON.stringify(notifications.value));
 };
 
-const addNotification = (notification) => {
-  const previousNotifications = JSON.parse(
-    localStorage.getItem("notifications")
-  );
-  if (!previousNotifications || !previousNotifications.includes(notification)) {
-    notifications.value.push(notification);
-    localStorage.setItem("notifications", JSON.stringify(notifications.value));
-    updateBadgeState();
-    showPopup.value = false;
-    location.reload();
-  }
+const processNotifications = (allNotifications) => {
+  notifications.value = allNotifications;
+  counthidden.value = allNotifications.length;
+
+  updateBadgeState();
 };
 
 const updateBadgeState = () => {
-  const previousNotifications = JSON.parse(
-    localStorage.getItem("notifications")
+  let hasNewSummaryNotification = false;
+  let newSummaryNotificationCount = 0;
+  let hasNewReviewNotification = false;
+  let newReviewNotificationCount = 0;
+
+  // Check new notifications from summary
+  const newNotificationsSummary = emailNotifications.summary.filter(
+    (notification) => !readSummaryNotifications[notification.id]
   );
-  if (previousNotifications && previousNotifications.length > 0) {
-    const newNotifications = notifications.value.filter(
-      (notification) => !previousNotifications.includes(notification)
-    );
-    if (newNotifications.length > 0) {
-      showBadge.value = true;
-      badgeCount.value = newNotifications.length;
-    }
+  if (newNotificationsSummary.length > 0) {
+    hasNewSummaryNotification = true;
+    newSummaryNotificationCount += newNotificationsSummary.length;
+  }
+
+  // Check new notifications from review
+  const newNotificationsReview = emailNotifications.review.filter(
+    (notification) => !readReviewNotifications[notification.id]
+  );
+  if (newNotificationsReview.length > 0) {
+    hasNewReviewNotification = true;
+    newReviewNotificationCount += newNotificationsReview.length;
+  }
+
+  // Update badge state
+  showBadge.value = hasNewSummaryNotification || hasNewReviewNotification;
+  badgeCount.value = newSummaryNotificationCount + newReviewNotificationCount;
+};
+
+
+const fetchNotifications = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+    };
+
+    const [summaryResponse, reviewResponse] = await Promise.all([
+      fetch(`${import.meta.env.VITE_BASE_URL}summary/hidden`, requestOptions),
+      fetch(`${import.meta.env.VITE_BASE_URL}review/hidden`, requestOptions)
+    ]);
+
+    const [summaryData, reviewData] = await Promise.all([
+      summaryResponse.json(),
+      reviewResponse.json()
+    ]);
+
+    // Separate notifications by type (summary or review)
+    emailNotifications.summary = filterSummaryNotifications(summaryData);
+    emailNotifications.review = filterReviewNotifications(reviewData);
+
+    // Merge all notifications for processing
+    const allNotifications = [
+      ...emailNotifications.summary.map(notification => ({ ...notification, type: 'summary' })),
+      ...emailNotifications.review.map(notification => ({ ...notification, type: 'review' })),
+    ];
+
+    // Process notifications and update badge state
+    processNotifications(allNotifications);
+  } catch (error) {
+    console.error("An error occurred while fetching notifications:", error);
   }
 };
 
-onMounted(() => {
-  const previousNotifications = JSON.parse(
-    localStorage.getItem("notifications")
-  );
-  if (previousNotifications && previousNotifications.length > 0) {
-    notifications.value = previousNotifications;
-    const unreadNotifications = notifications.value.filter(
-      (notification) => !readNotifications.includes(notification)
-    );
-    if (unreadNotifications.length === 0) {
-      showBadge.value = false;
-    } else {
-      showBadge.value = true;
-      badgeCount.value = unreadNotifications.length;
-    }
-  }
-});
-
-const addCustomNotification = () => {
-  if (newNotificationText.value.trim() !== "") {
-    addNotification(newNotificationText.value.trim());
-    newNotificationText.value = "";
-  }
+const filterSummaryNotifications = (summaryData) => {
+  return summaryData.filter((notification) => notification.title);
 };
 
-const mockNotifications = [
-  "New message from John",
-  "Reminder: Meeting at 10 AM",
-  "You have 3 new emails",
-];
-
-mockNotifications.forEach((notification) => {
-  addNotification(notification);
-});
+const filterReviewNotifications = (reviewData) => {
+  return reviewData.filter((notification) => notification.gradesReceived);
+};
 
 onMounted(() => {
   getreportsummary();
   getreportreview();
+  fetchNotifications();
 });
+
+
+
+
 
 const getreportsummary = async () => {
   try {
@@ -183,6 +220,11 @@ const Login = () => appRouter.push({ name: "login" });
 const Mycategory = () => {
   toggleDropdown();
   appRouter.push({ name: "Mycategory" });
+};
+
+const Myhidden = () => {
+  toggleDropdown();
+  appRouter.push({ name: "Myhidden" });
 };
 </script>
 
@@ -440,7 +482,7 @@ const Mycategory = () => {
               data-name="Path 197"
               d="M27,12A9,9,0,1,0,9,12C9,22.5,4.5,25.5,4.5,25.5h27S27,22.5,27,12"
               fill="none"
-              stroke="#19335a"
+              stroke="#4A5568"
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="3"
@@ -450,7 +492,7 @@ const Mycategory = () => {
               data-name="Path 198"
               d="M20.595,31.5a3,3,0,0,1-5.19,0"
               fill="none"
-              stroke="#19335a"
+              stroke="#4A5568"
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="3"
@@ -501,25 +543,32 @@ const Mycategory = () => {
     </div>
   </section>
 
-  <div
-    v-if="showPopup"
-    class="notification-popup mt-2 right-44 z-40 rounded-lg divide-y divide-gray-100 bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-  >
-    <a
-      class="noti_block text-gray-700 text-sm font-light "
-      v-for="(notification, index) in notifications"
-      :key="index"
-    >
-      {{ notification }}
+  <div v-if="showPopup" class="notification-popup mt-2 pb-1 right-44 z-40 rounded-lg divide-y divide-gray-100 bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+  <template v-if="notifications.length > 0">
+    <a class="noti_block text-gray-700 text-sm font-light" v-for="(notification, index) in notifications" :key="index">
+      <!-- ตรวจสอบว่าประเภทของแจ้งเตือนเป็น 'summary' หรือไม่ -->
+      <template v-if="notification.title && notification.hide">
+        <span>
+          The Summary of your {{ notification.categoryName }} - {{ notification.courseName }} course post, date {{
+            moment(notification.fileCreatedOn).locale("th").format("DD MMMM YYYY : hh:mm:ss")
+          }} has been hidden.
+        </span>
+      </template>
+      <!-- ตรวจสอบว่าประเภทของแจ้งเตือนเป็น 'review' หรือไม่ -->
+      <template v-if="notification.gradesReceived && notification.hide">
+        <span>
+          The Review of your {{ notification.categoryName }} - {{ notification.courseName }} course post, date {{
+            moment(notification.reviewCreatedOn).locale("th").format("DD MMMM YYYY : hh:mm:ss")
+          }} has been hidden.
+        </span>
+      </template>
     </a>
+  </template>
+  <template v-else>
+    <span class="text-gray-700 text-sm font-light">no notification</span>
+  </template>
+</div>
 
-    <input
-      type="text"
-      v-model="newNotificationText"
-      placeholder="Enter notification text"
-    />
-    <button @click="addCustomNotification">Add Notification</button>
-  </div>
 
   <div
     class="absolute right-14 z-40 mt-2 rounded-lg divide-y divide-gray-100 bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
@@ -550,8 +599,7 @@ const Mycategory = () => {
             </g>
           </g>
         </svg>
-        {{ username }} 
-
+        {{ username }}
 
         <div class="role">
           {{
@@ -619,8 +667,40 @@ const Mycategory = () => {
           </g>
         </svg>
 
-        My category</a
+        My Post</a
       >
+
+      <a
+        href="#"
+        class="text-gray-700 block px-5 py-3 text-sm font-light flex items-center hover:bg-gray-100 dark hover:dark:bg-gray-200 rounded-lg"
+        @click="Myhidden"
+        v-if="role === 'st_group'"
+      >
+        <svg
+          style="margin-right: 13px; width: 18px"
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="17.273"
+          viewBox="0 0 20 17.273"
+        >
+          <g
+            id="Iconly_Light-Outline_Hide"
+            data-name="Iconly/Light-Outline/Hide"
+            transform="translate(-2 -3)"
+          >
+            <g id="Hide" transform="translate(2 3)">
+              <path
+                id="Combined-Shape"
+                d="M18.417.22a.75.75,0,0,1,0,1.061L2.643,17.054a.75.75,0,0,1-1.06-1.06l1.972-1.971A14.751,14.751,0,0,1,.062,8.934a.745.745,0,0,1,0-.593A14.415,14.415,0,0,1,4.22,2.683a9.117,9.117,0,0,1,11.048-.375L17.357.22A.749.749,0,0,1,18.417.22Zm-.37,4.821a16.144,16.144,0,0,1,1.891,3.3.742.742,0,0,1,0,.6c-2.1,4.857-5.811,7.756-9.938,7.756a8.771,8.771,0,0,1-2.769-.451.75.75,0,1,1,.474-1.424,7.245,7.245,0,0,0,2.3.375c3.428,0,6.561-2.442,8.43-6.553a14.5,14.5,0,0,0-1.581-2.694.75.75,0,1,1,1.2-.9Zm-12.9-1.18A12.736,12.736,0,0,0,1.571,8.639a13.022,13.022,0,0,0,3.047,4.322l2.138-2.138a3.87,3.87,0,0,1-.669-2.185,3.912,3.912,0,0,1,6.1-3.248l2-2A7.586,7.586,0,0,0,5.149,3.861Zm8.088,4.6a.75.75,0,0,1,.606.871A3.919,3.919,0,0,1,10.7,12.48a.778.778,0,0,1-.135.012A.75.75,0,0,1,10.434,11a2.409,2.409,0,0,0,1.932-1.937A.754.754,0,0,1,13.238,8.462ZM10,6.222A2.418,2.418,0,0,0,7.586,8.639,2.389,2.389,0,0,0,7.848,9.73l3.246-3.246A2.413,2.413,0,0,0,10,6.222Z"
+                fill-rule="evenodd"
+                fill="#4A5568"
+              />
+            </g>
+          </g>
+        </svg>
+
+        Hidden
+      </a>
     </div>
     <div class="py-1" role="none">
       <a
@@ -663,7 +743,7 @@ const Mycategory = () => {
   ></div>
   <!-- backdrop-blur-sm -->
   <div
-    class="overlay fixed inset-0 bg-white bg-opacity-0 z-30"
+    class="overlay fixed inset-0 bg-black bg-opacity-20 z-30"
     @click="handleNotificationClick"
     v-if="showPopup"
   ></div>
@@ -820,10 +900,10 @@ ul li:hover span {
   margin-top: 15px;
   width: 30px;
   height: 30px;
- /* background-color: #4675c0; */
+  /* background-color: #4675c0; */
 }
 
-.bell:hover{
+.bell:hover {
   opacity: 0.5;
 }
 
@@ -848,7 +928,7 @@ ul li:hover span {
   margin-top: 15px;
   margin-left: 15px;
   margin-right: 15px;
-  margin-bottom: -3px;
+  margin-bottom: 15px;
   /* width: 200px; */
   border-radius: 5px;
   padding-left: 10px;

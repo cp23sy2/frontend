@@ -132,6 +132,8 @@ const getCategoryColor = (courseName) => {
     return "#A698F0";
   } else if (courseName.startsWith("INT")) {
     return "#B7DB92";
+  }else if (courseName.startsWith("LNG")) {
+    return "#FF9F9F";
   }
 };
 
@@ -513,7 +515,16 @@ onBeforeMount(() => {
               }"
               v-if="summary.courseName.startsWith('SSC')"
               >{{ summary.courseName }} {{ summary.courseFullName }}</span
-            ><br />
+            >
+            <span
+              class="course_subject"
+              :style="{
+                backgroundColor: getCategoryColor(summary.courseName),
+              }"
+              v-if="summary.courseName.startsWith('LNG')"
+              >{{ summary.courseName }} {{ summary.courseFullName }}</span
+            >
+            <br />
             <svg
               style="margin-right: 13px; width: 18px"
               xmlns="http://www.w3.org/2000/svg"
@@ -1010,6 +1021,14 @@ onBeforeMount(() => {
                 backgroundColor: getCategoryColor(review.categoryName),
               }"
               v-if="review.categoryName === 'SSC'"
+              >{{ review.courseName }} {{ review.courseFullName }}</span
+            >
+            <span
+              class="course_subject_review"
+              :style="{
+                backgroundColor: getCategoryColor(review.categoryName),
+              }"
+              v-if="review.categoryName === 'LNG'"
               >{{ review.courseName }} {{ review.courseFullName }}</span
             >
 

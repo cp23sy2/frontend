@@ -88,6 +88,7 @@ const handleSelectedOption = async (option) => {
       showSuccess.value = true;
       closePopup();
       setTimeout(() => {
+        fetchReviews();
         hideSuccess();
       }, 1500);
     } else {

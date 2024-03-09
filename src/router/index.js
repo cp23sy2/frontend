@@ -13,6 +13,7 @@ import Report from "../views/Report.vue";
 import Mycategory from "../components/Mycategory.vue";
 import nopageComponent from '../views/Nopage.vue'
 import nopermissionComponent from '../views/NoPermission.vue'
+import Myhidden from '../components/Myhidden.vue';
 
 const history = createWebHistory("/sy2/");
 
@@ -90,6 +91,12 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
+    path: "/my-hidden",
+    name: "Myhidden",
+    component: Myhidden,
+    meta: { requiresAuth: true },
+  },
+  {
     path: "/:catchAll(.*)",
     name: "catchAll",
     component: nopageComponent 
@@ -136,6 +143,7 @@ const restrictedRoutesForAdmin = [
   "AddSummary",
   "EditReview",
   "EditSummary",
+  "Myhidden"
 ];
 const restrictedRoutesForStudent = ["Report"];
 

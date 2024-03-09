@@ -99,6 +99,8 @@ const getCategoryColor = (categoryName) => {
       return "#A698F0";
     case "INT":
       return "#B7DB92";
+    case "LNG":
+      return "#FF9F9F";
   }
 };
 
@@ -210,6 +212,15 @@ const Login = () => appRouter.push({ name: "login" });
             >
               S
             </div>
+            <div
+              class="categoryname"
+              :style="{
+                backgroundColor: getCategoryColor(course.categoryName),
+              }"
+              v-if="course.categoryName === 'LNG'"
+            >
+              L
+            </div>
 
             <div class="course-detail">
               <h3 class="coursename">{{ course.courseName }}</h3>
@@ -219,6 +230,47 @@ const Login = () => appRouter.push({ name: "login" });
             <div class="credit">
               <img src="../assets/score.png" class="credit-icon" />
               Credit : {{ course.courseCredit }}
+            </div>
+
+            <!-- จำนวน post -->
+            <div
+              class="count_comment flex items-center"
+              :style="{
+                backgroundColor: getCategoryColor(course.categoryName),
+              }"
+              v-if="course.categoryName === 'GEN'"
+            >
+              <span>Post : {{ course.summariesCount }}</span>
+            </div>
+
+            <div
+              class="count_comment flex items-center"
+              :style="{
+                backgroundColor: getCategoryColor(course.categoryName),
+              }"
+              v-if="course.categoryName === 'INT'"
+            >
+              <span>Post : {{ course.summariesCount }}</span>
+            </div>
+
+            <div
+              class="count_comment flex items-center"
+              :style="{
+                backgroundColor: getCategoryColor(course.categoryName),
+              }"
+              v-if="course.categoryName === 'SSC'"
+            >
+              <span>Post : {{ course.summariesCount }}</span>
+            </div>
+
+            <div
+              class="count_comment flex items-center"
+              :style="{
+                backgroundColor: getCategoryColor(course.categoryName),
+              }"
+              v-if="course.categoryName === 'LNG'"
+            >
+              <span>Post : {{ course.summariesCount }}</span>
             </div>
 
             <router-link
@@ -875,5 +927,32 @@ margin-right: 10px; */
   margin-bottom: 50px;
   display: flex;
   justify-content: center;
+}
+
+.count_comment {
+  letter-spacing: 0.8px;
+  color: #ffffff;
+  background-color: #b8bfd6;
+  font-weight: 900;
+  font-size: 12px;
+  width: auto;
+  height: 25px;
+  box-shadow: 0px 0px 15px #457aef0d;
+  /* border: 1px solid #697b98; */
+  border-radius: 10px;
+  position: absolute;
+  bottom: 203px;
+  right: 0;
+  width: auto;
+  padding-right: 15px;
+  padding-left: 15px;
+  height: 33px;
+  box-shadow: 0px 0px 15px #457aef0d;
+  border-radius: 0px 15px;
+  opacity: 1;
+}
+.count_comment svg {
+  margin-right: 8px;
+  margin-left: 12px;
 }
 </style>
