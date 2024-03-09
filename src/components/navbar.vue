@@ -4,7 +4,6 @@ import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
 import moment from "moment";
 
-
 const route = useRoute();
 
 const isActive = (path) => {
@@ -27,7 +26,6 @@ function toggleDropdown() {
   dropdown.value = !dropdown.value;
 }
 
-
 const notifications = ref([]);
 const counthidden = ref();
 const showBadge = ref(false);
@@ -35,8 +33,10 @@ const showPopup = ref(false);
 const newNotificationText = ref("");
 const badgeCount = ref(0);
 
-let readSummaryNotifications = JSON.parse(localStorage.getItem("readSummaryNotifications")) || {};
-let readReviewNotifications = JSON.parse(localStorage.getItem("readReviewNotifications")) || {};
+let readSummaryNotifications =
+  JSON.parse(localStorage.getItem("readSummaryNotifications")) || {};
+let readReviewNotifications =
+  JSON.parse(localStorage.getItem("readReviewNotifications")) || {};
 const emailNotifications = { summary: [], review: [] };
 
 const handleNotificationClick = () => {
@@ -45,16 +45,28 @@ const handleNotificationClick = () => {
   badgeCount.value = 0; // Reset badge count when notifications are clicked
 
   notifications.value.forEach((notification) => {
-    if (notification.type === 'summary' && !readSummaryNotifications[notification.id]) {
+    if (
+      notification.type === "summary" &&
+      !readSummaryNotifications[notification.id]
+    ) {
       readSummaryNotifications[notification.id] = true;
     }
-    if (notification.type === 'review' && !readReviewNotifications[notification.id]) {
+    if (
+      notification.type === "review" &&
+      !readReviewNotifications[notification.id]
+    ) {
       readReviewNotifications[notification.id] = true;
     }
   });
 
-  localStorage.setItem("readSummaryNotifications", JSON.stringify(readSummaryNotifications));
-  localStorage.setItem("readReviewNotifications", JSON.stringify(readReviewNotifications));
+  localStorage.setItem(
+    "readSummaryNotifications",
+    JSON.stringify(readSummaryNotifications)
+  );
+  localStorage.setItem(
+    "readReviewNotifications",
+    JSON.stringify(readReviewNotifications)
+  );
   localStorage.setItem("notifications", JSON.stringify(notifications.value));
 };
 
@@ -94,7 +106,6 @@ const updateBadgeState = () => {
   badgeCount.value = newSummaryNotificationCount + newReviewNotificationCount;
 };
 
-
 const fetchNotifications = async () => {
   try {
     const token = localStorage.getItem("token");
@@ -108,12 +119,12 @@ const fetchNotifications = async () => {
 
     const [summaryResponse, reviewResponse] = await Promise.all([
       fetch(`${import.meta.env.VITE_BASE_URL}summary/hidden`, requestOptions),
-      fetch(`${import.meta.env.VITE_BASE_URL}review/hidden`, requestOptions)
+      fetch(`${import.meta.env.VITE_BASE_URL}review/hidden`, requestOptions),
     ]);
 
     const [summaryData, reviewData] = await Promise.all([
       summaryResponse.json(),
-      reviewResponse.json()
+      reviewResponse.json(),
     ]);
 
     // Separate notifications by type (summary or review)
@@ -122,8 +133,14 @@ const fetchNotifications = async () => {
 
     // Merge all notifications for processing
     const allNotifications = [
-      ...emailNotifications.summary.map(notification => ({ ...notification, type: 'summary' })),
-      ...emailNotifications.review.map(notification => ({ ...notification, type: 'review' })),
+      ...emailNotifications.summary.map((notification) => ({
+        ...notification,
+        type: "summary",
+      })),
+      ...emailNotifications.review.map((notification) => ({
+        ...notification,
+        type: "review",
+      })),
     ];
 
     // Process notifications and update badge state
@@ -146,10 +163,6 @@ onMounted(() => {
   getreportreview();
   fetchNotifications();
 });
-
-
-
-
 
 const getreportsummary = async () => {
   try {
@@ -503,6 +516,7 @@ const Myhidden = () => {
         <span v-if="showBadge" class="badge" v-show="badgeCount > 0">{{
           badgeCount
         }}</span>
+        <span v-if="showBadge" class="badge" v-show="badgeCount > 9">9+</span>
       </div>
 
       <img
@@ -543,32 +557,54 @@ const Myhidden = () => {
     </div>
   </section>
 
-  <div v-if="showPopup" class="notification-popup mt-2 pb-1 right-44 z-40 rounded-lg divide-y divide-gray-100 bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-  <template v-if="notifications.length > 0">
-    <a class="noti_block text-gray-700 text-sm font-light" v-for="(notification, index) in notifications" :key="index">
-      <!-- ตรวจสอบว่าประเภทของแจ้งเตือนเป็น 'summary' หรือไม่ -->
-      <template v-if="notification.title && notification.hide">
-        <span>
-          The Summary of your {{ notification.categoryName }} - {{ notification.courseName }} course post, date {{
-            moment(notification.fileCreatedOn).locale("th").format("DD MMMM YYYY : hh:mm:ss")
-          }} has been hidden.
-        </span>
-      </template>
-      <!-- ตรวจสอบว่าประเภทของแจ้งเตือนเป็น 'review' หรือไม่ -->
-      <template v-if="notification.gradesReceived && notification.hide">
-        <span>
-          The Review of your {{ notification.categoryName }} - {{ notification.courseName }} course post, date {{
-            moment(notification.reviewCreatedOn).locale("th").format("DD MMMM YYYY : hh:mm:ss")
-          }} has been hidden.
-        </span>
-      </template>
-    </a>
-  </template>
-  <template v-else>
-    <span class="text-gray-700 text-sm font-light">no notification</span>
-  </template>
-</div>
-
+  <div
+    v-if="showPopup"
+    class="notification-popup mt-2 pb-1 right-44 z-40 rounded-lg divide-y divide-gray-100 bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+  >
+    <template v-if="notifications.length > 0">
+      <p class="ml-4 mt-4 mb-6 text-gray-700 text-md font-medium">
+        Notifications
+      </p>
+      <div class="line-noti-popup"></div>
+      <a
+        class="noti_block text-gray-700 text-sm font-light"
+        v-for="(notification, index) in notifications"
+        :key="index"
+      >
+        <!-- ตรวจสอบว่าประเภทของแจ้งเตือนเป็น 'summary' หรือไม่ -->
+        <template v-if="notification.title && notification.hide">
+          <span>
+            โพสต์สรุปรายวิชา {{ notification.courseName }}
+            {{ notification.courseFullName }}<br />วันที่
+            {{
+              moment(notification.fileCreatedOn)
+                .locale("th")
+                .format("DD MMMM YYYY เวลา hh:mm")
+            }}
+            <br />ของคุณถูกซ่อน
+          </span>
+        </template>
+        <!-- ตรวจสอบว่าประเภทของแจ้งเตือนเป็น 'review' หรือไม่ -->
+        <template v-if="notification.gradesReceived && notification.hide">
+          <span>
+            โพสต์รีวิวรายวิชา {{ notification.courseName }}
+            {{ notification.courseFullName }}<br />วันที่
+            {{
+              moment(notification.fileCreatedOn)
+                .locale("th")
+                .format("DD MMMM YYYY เวลา hh:mm")
+            }}
+            <br />ของคุณถูกซ่อน
+          </span>
+        </template>
+      </a>
+    </template>
+    <template v-else>
+      <div class="flex justify-center items-center h-full">
+        <span class="No-notifications"> No notifications </span>
+      </div>
+    </template>
+  </div>
 
   <div
     class="absolute right-14 z-40 mt-2 rounded-lg divide-y divide-gray-100 bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
@@ -885,9 +921,10 @@ ul li:hover span {
   position: absolute;
   overflow-y: auto; /* เลือกเฉพาะการเลื่อนแนวตั้ง */
   overflow-x: hidden; /* ป้องกันการเลื่อนแนวนอน */
-  height: 205px;
+  height: 200px;
   width: 280px;
   top: 80px;
+  padding-bottom: 15px;
   background-color: white;
   /* padding: 10px; */
 }
@@ -910,16 +947,20 @@ ul li:hover span {
 .badge {
   background-color: red;
   color: white;
-  border-radius: 50%;
+  border-radius: 100px;
   /* padding: 0.3em; */
   font-size: 12px;
-  padding-left: 7px;
+  padding-left: 5px;
+  padding-right: 7px;
+  text-align: center;
+
   padding-top: 1.7px;
   position: absolute;
   margin-top: -32px;
-  width: 20px;
+  width: 23px;
   height: 20px;
   margin-left: 10px;
+  position: absolute;
   /* top: 0;
   right: 0; */
 }
@@ -928,7 +969,7 @@ ul li:hover span {
   margin-top: 15px;
   margin-left: 15px;
   margin-right: 15px;
-  margin-bottom: 15px;
+  /* margin-bottom: 15px; */
   /* width: 200px; */
   border-radius: 5px;
   padding-left: 10px;
@@ -939,5 +980,25 @@ ul li:hover span {
   display: block;
   overflow: hidden;
   word-wrap: break-word;
+}
+
+.No-notifications {
+  color: #b8bfd6;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.56px;
+  text-align: center;
+}
+
+.line-noti-popup {
+  background-color: #e6e6e6;
+  height: 1px;
+  width: 250px;
+  position: absolute;
+  left: 50%;
+  right: 50%;
+  margin-top: -15px;
+  transform: translate(-50%, -50%);
+  /* bottom: 78%; */
 }
 </style>

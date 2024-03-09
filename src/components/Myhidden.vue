@@ -429,9 +429,7 @@ const Login = () => appRouter.push({ name: "login" });
             <div class="popup">
               <div class="popup-content">
                 <div v-if="hideofsummary.length > 0">
-                  <div class="comment_header">
-                     Detail Hidden
-                  </div>
+                  <div class="comment_header">Detail Hidden</div>
                   <div class="line-comment-popup"></div>
                   <div
                     v-for="(hide, hideIndex) in hideofsummary"
@@ -501,6 +499,22 @@ const Login = () => appRouter.push({ name: "login" });
                       </div>
                       <br />
                     </div>
+                  </div>
+                </div>
+
+                <div v-else>
+                  <div class="comment_header">Detail Hidden</div>
+                  <div class="line-comment-popup"></div>
+
+                  <div class="detail-hidden-admin">
+                    โพสต์ของคุณถูกซ่อนโดย admin เนื่องจาก <br />
+                    <span style="font-weight: 500; color: #d20000"
+                      >มีเนื้อหาที่ไม่เหมาะสม</span
+                    >
+                    หรือ
+                    <span style="font-weight: 500; color: #d20000"
+                      >เนื้อหาไม่ตรงกับรายวิชา</span
+                    >
                   </div>
                 </div>
 
@@ -1110,9 +1124,7 @@ const Login = () => appRouter.push({ name: "login" });
             <div class="popup">
               <div class="popup-content">
                 <div v-if="hideofreview.length > 0">
-                  <div class="comment_header">
-                    ({{ hideofreview.length }}) Detail Hidden
-                  </div>
+                  <div class="comment_header">Detail Hidden</div>
                   <div class="line-comment-popup"></div>
                   <div
                     v-for="(hide, hideIndex) in hideofreview"
@@ -1184,6 +1196,23 @@ const Login = () => appRouter.push({ name: "login" });
                     </div>
                   </div>
                 </div>
+
+                <div v-else>
+                  <div class="comment_header">Detail Hidden</div>
+                  <div class="line-comment-popup"></div>
+
+                  <div class="detail-hidden-admin">
+                    โพสต์ของคุณถูกซ่อนโดย admin เนื่องจาก <br />
+                    <span style="font-weight: 500; color: #d20000"
+                      >มีเนื้อหาที่ไม่เหมาะสม</span
+                    >
+                    หรือ
+                    <span style="font-weight: 500; color: #d20000"
+                      >เนื้อหาไม่ตรงกับรายวิชา</span
+                    >
+                  </div>
+                </div>
+
                 <!-- Close Button -->
                 <div
                   class="close-button"
@@ -2160,6 +2189,28 @@ const Login = () => appRouter.push({ name: "login" });
   opacity: 1;
   margin-bottom: 25px;
   top: 50px;
+}
+
+.detail-hidden-admin {
+  display: block;
+  margin: auto;
+  position: relative;
+  width: 554px;
+  height: auto;
+  /* background: #f7f7fa 0% 0% no-repeat padding-box;
+  border: 1px solid #ededed; */
+  border-radius: 20px;
+  opacity: 1;
+  margin-bottom: 25px;
+  top: 160px;
+  padding: 50px;
+  font-size: 20px;
+  color: #666;
+  margin-bottom: 50px;
+  color: #697a98;
+  font: normal normal 400 18px/22px Anuphan;
+  letter-spacing: 1px;
+  line-height: 40px;
 }
 
 .edit-comment {
