@@ -161,6 +161,7 @@ const Login = () => appRouter.push({ name: "login" });
             <option value="int">INT</option>
             <option value="gen">GEN</option>
             <option value="ssc">SSC</option>
+            <option value="lng">LNG</option>
           </select>
         </div>
 
@@ -859,6 +860,9 @@ const Login = () => appRouter.push({ name: "login" });
   opacity: 1;
   margin-left: 110px;
   margin-top: 3px;
+  /* width: 250px; */
+  width: auto;
+  padding-right: 20px;
 }
 
 .course-detail {
@@ -885,7 +889,7 @@ const Login = () => appRouter.push({ name: "login" });
   opacity: 1;
   text-align: center;
   position: absolute;
-  bottom: 25px;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
