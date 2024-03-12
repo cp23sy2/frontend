@@ -99,7 +99,7 @@ const Dashboard = () => appRouter.push({ name: "Dashboard" });
             class="login"
             :disabled="!username || !password"
           >
-            Login ja
+            Login
           </button>
         </form>
       </div>
