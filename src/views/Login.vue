@@ -18,7 +18,6 @@ const username = ref("");
 const password = ref("");
 const loading = ref(false);
 
-// console.log("dear")
 const login = async () => {
   loading.value = true;
   console.log('loading:', loading.value);
@@ -100,7 +99,7 @@ const Dashboard = () => appRouter.push({ name: "Dashboard" });
             class="login"
             :disabled="!username || !password"
           >
-            Login
+            Login ja
           </button>
         </form>
       </div>
