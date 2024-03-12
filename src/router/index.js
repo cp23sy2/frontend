@@ -11,7 +11,7 @@ import SummaryDetail from "../components/SummaryDetail.vue";
 import EditSummary from "../components/EditSummary.vue";
 import Report from "../views/Report.vue";
 import Mycategory from "../components/Mycategory.vue";
-import nopageComponent from '../views/Nopage.vue'
+import nopageComponent from '../views/NoPage.vue'
 import nopermissionComponent from '../views/NoPermission.vue'
 import Myhidden from '../components/Myhidden.vue';
 
