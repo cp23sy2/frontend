@@ -3,8 +3,6 @@ import { ref, onMounted, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
 import moment from "moment";
-import 'moment/locale/th';
-moment.locale('th');
 
 
 const route = useRoute();
@@ -583,7 +581,7 @@ const Myhidden = () => {
             {{
               moment(notification.fileCreatedOn)
                 .locale("th")
-                .format("DD MMMM YYYY เวลา hh:mm")
+                .format("DD MMMM YYYY เวลา HH:mm น.")
             }}
             <br />ของคุณถูกซ่อน
           </span>
@@ -596,7 +594,7 @@ const Myhidden = () => {
             {{
               moment(notification.reviewCreatedOn)
                 .locale("th")
-                .format("DD MMMM YYYY เวลา hh:mm")
+                .format("DD MMMM YYYY เวลา HH:mm น.")
             }}
             <br />ของคุณถูกซ่อน
           </span>
