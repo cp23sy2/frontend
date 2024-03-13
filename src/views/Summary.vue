@@ -83,6 +83,7 @@ onBeforeMount(async () => {
 const filterCourses = () => {
   const category = filterCriteria.value.toLowerCase();
   const search = searchQuery.value.toLowerCase();
+  const showHasPost = document.getElementById('bordered-checkbox-2').checked;
 
   filteredCourses.value = courses.value.filter((course) => {
     const courseName = course.courseName.toLowerCase();
@@ -90,12 +91,14 @@ const filterCourses = () => {
 
     const categoryMatch = category === "all" || courseName.startsWith(category);
     const searchMatch = courseName.includes(search) || courseFullName.includes(search);
+    const hasPostMatch = showHasPost ? course.summariesCount > 0 : true;
 
-    return categoryMatch && searchMatch;
+    return categoryMatch && searchMatch && hasPostMatch;
   });
 
   currentPage.value = 1;
 };
+
 
 // const isSearchDisabled = computed(() => {
 //   return !searchQuery.value && filterCriteria.value === "all";
@@ -104,6 +107,8 @@ const filterCourses = () => {
 const clearFilter = () => {
   searchQuery.value = "";
   filterCriteria.value = "all";
+  const checkbox = document.getElementById('bordered-checkbox-2');
+  checkbox.checked = false;
   filterCourses();
 };
 
@@ -172,6 +177,16 @@ const Login = () => appRouter.push({ name: "login" });
               :value="`${course.courseName} ${course.courseFullName}`"
             ></option>
           </datalist> -->
+        </div>
+        <div class="filter-item">
+          <p class="second">Show only has post</p>
+          <input
+            id="bordered-checkbox-2"
+            type="checkbox"
+            value="true"
+            name="bordered-checkbox"
+            class="w-4 h-4 ml-8 mt-4"
+          />
         </div>
 
         <div class="button-2">
@@ -557,7 +572,7 @@ const Login = () => appRouter.push({ name: "login" });
   letter-spacing: 0.56px;
   color: white;
   margin-right: 20px;
-  margin-left: 330px;
+  margin-left: 140px;
   margin-top: 57px;
 }
 
