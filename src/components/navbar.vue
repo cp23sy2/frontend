@@ -241,6 +241,12 @@ const Myhidden = () => {
   toggleDropdown();
   appRouter.push({ name: "Myhidden" });
 };
+
+const Myhiddens = () => {
+  // toggleDropdown();
+  showPopup.value = !showPopup.value;
+  appRouter.push({ name: "Myhidden" });
+};
 </script>
 
 <template>
@@ -572,22 +578,31 @@ const Myhidden = () => {
         class="noti_block text-gray-700 text-sm font-light"
         v-for="(notification, index) in notifications"
         :key="index"
+        @click="Myhiddens"
       >
         <!-- ตรวจสอบว่าประเภทของแจ้งเตือนเป็น 'summary' หรือไม่ -->
         <template v-if="notification.title && notification.hide">
           <span>
             โพสต์สรุปรายวิชา {{ notification.courseName }}
-            {{ notification.courseFullName }}<br />วันที่
+            {{ notification.courseFullName }}<br />
+            วันที่
             {{
               moment(notification.fileCreatedOn)
                 .locale("th")
                 .format("DD MMMM YYYY เวลา HH:mm น.")
             }}
+             <!-- {{
+              moment(notification.fileCreatedOn).diff(moment(), "days") > -7
+                ? moment(notification.fileCreatedOn).locale("th").fromNow()
+                : moment(notification.fileCreatedOn)
+                    .locale("th")
+                    .format("DD MMMM YYYY")
+            }} -->
             <br />ของคุณถูกซ่อน
           </span>
         </template>
         <!-- ตรวจสอบว่าประเภทของแจ้งเตือนเป็น 'review' หรือไม่ -->
-        <template v-if="notification.gradesReceived && notification.hide">
+        <template v-if="notification.gradesReceived && notification.hide" >
           <span>
             โพสต์รีวิวรายวิชา {{ notification.courseName }}
             {{ notification.courseFullName }}<br />วันที่
@@ -980,11 +995,19 @@ ul li:hover span {
   padding-right: 10px;
   padding-top: 5px;
   padding-bottom: 5px;
-  background: #f6f6f6 0% 0% no-repeat padding-box;
+  background: #f9f9f9;
   display: block;
   overflow: hidden;
   word-wrap: break-word;
+  border: 1px solid transparent; 
 }
+
+.noti_block:hover {
+  cursor: pointer;
+  background-color: #eef4ff;
+  border: 1px solid #4675c0 !important;
+}
+
 
 .No-notifications {
   color: #b8bfd6;
