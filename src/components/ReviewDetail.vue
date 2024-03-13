@@ -1170,6 +1170,8 @@ const Login = () => appRouter.push({ name: "login" });
 
 .info:hover {
   opacity: 0.5;
+  cursor: pointer;
+
 }
 
 .user_review {

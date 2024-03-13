@@ -1916,6 +1916,8 @@ onBeforeMount(() => {
 
 .inforeport:hover {
   opacity: 0.5;
+  cursor: pointer;
+
 }
 
 .report-detail {

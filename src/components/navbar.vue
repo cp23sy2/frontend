@@ -3,6 +3,9 @@ import { ref, onMounted, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
 import moment from "moment";
+import 'moment/locale/th';
+moment.locale('th');
+
 
 const route = useRoute();
 
@@ -222,6 +225,7 @@ const signout = () => {
   localStorage.removeItem("username");
   localStorage.removeItem("email");
   localStorage.removeItem("role");
+  localStorage.removeItem("token");
   localStorage.removeItem("token");
 
   Login();
@@ -590,7 +594,7 @@ const Myhidden = () => {
             โพสต์รีวิวรายวิชา {{ notification.courseName }}
             {{ notification.courseFullName }}<br />วันที่
             {{
-              moment(notification.fileCreatedOn)
+              moment(notification.reviewCreatedOn)
                 .locale("th")
                 .format("DD MMMM YYYY เวลา hh:mm")
             }}
@@ -818,6 +822,7 @@ const Myhidden = () => {
   width: 50px;
   height: 50px;
   margin-left: -18px;
+  cursor: pointer;
 }
 
 .backdrop svg {
@@ -942,6 +947,7 @@ ul li:hover span {
 
 .bell:hover {
   opacity: 0.5;
+  cursor: pointer;
 }
 
 .badge {
@@ -950,7 +956,7 @@ ul li:hover span {
   border-radius: 100px;
   /* padding: 0.3em; */
   font-size: 12px;
-  padding-left: 5px;
+  padding-left: 6px;
   padding-right: 7px;
   text-align: center;
 
@@ -960,7 +966,7 @@ ul li:hover span {
   width: 23px;
   height: 20px;
   margin-left: 10px;
-  position: absolute;
+  /* position: absolute; */
   /* top: 0;
   right: 0; */
 }

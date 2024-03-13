@@ -288,12 +288,6 @@ const Review = () => appRouter.push({ name: "Review" });
             v-model="section"
             type="number"
             class="dropdown"
-            :style="{
-              border:
-                isInvalidInstructorName && hasClickedEditButton
-                  ? '1px solid red'
-                  : '',
-            }"
           />
         </div>
 
@@ -323,12 +317,6 @@ const Review = () => appRouter.push({ name: "Review" });
             class="dropdown"
             :min="2015"
             :max="maxYear"
-            :style="{
-              border:
-                isInvalidInstructorName && hasClickedEditButton
-                  ? '1px solid red'
-                  : '',
-            }"
           />
         </div>
 
@@ -587,11 +575,6 @@ button {
   opacity: 0.5;
   cursor: not-allowed;
 }
-.error-tooltip {
-  color: red;
-  font-size: 12px;
-  margin-left: 45px;
-}
 
 .add-boxs {
   display: flex;
@@ -688,9 +671,12 @@ button {
 }
 
 .error-tooltip {
-  margin-left: 10px;
+  margin-left: 45px;
   font-weight: 100;
-  font-size: 11px;
+  font-size: 10px;
+  color: red;
+  display:inline-block;
+  
 }
 
 .toast-container {

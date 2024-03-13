@@ -2818,6 +2818,8 @@ const Login = () => appRouter.push({ name: "login" });
 
 .report-detail:hover {
   opacity: 0.5;
+  cursor: pointer;
+
 }
 
 .report-detail svg {
@@ -2847,6 +2849,8 @@ const Login = () => appRouter.push({ name: "login" });
 
 .hidereview-detail:hover {
   opacity: 0.5;
+  cursor: pointer;
+
 }
 
 .hidereview-detail svg {

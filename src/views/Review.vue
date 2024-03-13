@@ -859,7 +859,9 @@ const Login = () => appRouter.push({ name: "login" });
   margin-top: 3px;
   /* width: 250px; */
   width: auto;
-  padding-right: 20px;
+  /* background-color: #2152a0; */
+  /* padding-right: 20px; */
+  margin-right: 20px;
 }
 
 .course-detail {

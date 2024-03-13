@@ -169,7 +169,6 @@ const saveChanges = async () => {
       formData.append("title", summaryData.value.title);
       formData.append("hide", summaryData.value.hide);
 
-
       const saveResponse = await fetch(
         `${import.meta.env.VITE_BASE_URL}summary/${params.summaryid}`,
         {
@@ -292,26 +291,22 @@ onMounted(() => {
 
         <div class="input-group">
           <label for="fileUpload" class="lable">File Upload</label> <br />
-
           <input
             type="file"
             @change="handleFileChange"
             id="fileUpload"
             required
+            class="block w-80 text-sm text-gray-500 file:me-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gray-500 file:text-white hover:file:bg-gray-600 file:disabled:opacity-50 file:disabled:pointer-events-none "
           />
 
-          <p v-if="isFileSelected" class="size-file">
-            Selected file size: {{ getFileSize() }}
-          </p>
           <svg
             v-if="isFileSelected"
             type="button"
             @click="clearFile"
             id="clearfile"
-            class="h-8 w-8 text-red-500"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="currentColor"
+            stroke="#d20000"
             stroke-width="2"
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -324,15 +319,6 @@ onMounted(() => {
             <line x1="14" y1="11" x2="14" y2="17" />
           </svg>
 
-          <!-- <button
-            v-if="isFileSelected"
-            type="button"
-     
-            @click="clearFile"
-          >
-            Clear File
-          </button> -->
-
           <span class="file-pre"
             >ไฟล์ที่เคยอัพโหลด :
             {{ extractFileName(summaryData.fileUpload).slice(14) }}</span
@@ -340,14 +326,6 @@ onMounted(() => {
         </div>
       </div>
       <br />
-
-      <!-- <button
-    @click="saveChanges"
-    :disabled="!isDataChanged"
-    class="editSummary"
-      >
-        Save Edit
-      </button> -->
 
       <div class="button_add_clear">
         <button
@@ -558,8 +536,9 @@ button {
 }
 
 #clearfile {
-  margin-top: -30px;
-  margin-left: 280px;
+  margin-top: -50px;
+  /* margin-left: 80px; */
+  float: right;
   width: 25px;
 }
 

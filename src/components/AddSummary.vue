@@ -146,7 +146,6 @@ const isFormEmpty = computed(() => {
 const selectedCourseName = ref("");
 const isDropdownOpen = ref(false);
 
-
 const toggleDropdown = () => {
   if (isDropdownOpen.value) {
     isDropdownOpen.value = false;
@@ -154,7 +153,6 @@ const toggleDropdown = () => {
     isDropdownOpen.value = true;
   }
 };
-
 
 const hideDropdown = () => {
   setTimeout(() => {
@@ -243,7 +241,6 @@ const Summary = () => appRouter.push({ name: "Summary" });
             v-model="selectedCourseName"
             placeholder="Search Course ..."
             @focus="toggleDropdown"
-      
           />
           <ul v-if="isDropdownOpen" class="ul_list">
             <li
@@ -315,26 +312,23 @@ const Summary = () => appRouter.push({ name: "Summary" });
 
         <div class="input-group">
           <label for="fileUpload" class="lable">File Upload</label> <br />
+            <input
+              type="file"
+              @change="handleFileUpload"
+              id="fileUpload"
+              required
+              name="file-input"
+              class="block w-80 text-sm text-gray-500 file:me-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gray-500 file:text-white hover:file:bg-gray-600 file:disabled:opacity-50 file:disabled:pointer-events-none "
+            />
 
-          <input
-            type="file"
-            @change="handleFileUpload"
-            id="fileUpload"
-            required
-          />
-
-          <p v-if="isFileSelected" class="size-file">
-            Selected file size: {{ getFileSize() }}
-          </p>
           <svg
             v-if="isFileSelected"
             type="button"
             @click="clearFile"
             id="clearfile"
-            class="h-8 w-8 text-red-500"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="currentColor"
+            stroke="#d20000"
             stroke-width="2"
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -438,11 +432,6 @@ button {
   opacity: 0.5;
   cursor: not-allowed;
 }
-.error-tooltip {
-  color: red;
-  font-size: 12px;
-  margin-left: 45px;
-}
 
 .add-boxs {
   display: flex;
@@ -538,9 +527,11 @@ button {
 }
 
 .error-tooltip {
-  margin-left: 10px;
+  margin-left: 45px;
   font-weight: 100;
-  font-size: 11px;
+  font-size: 10px;
+  color: red;
+  display:inline-block;
 }
 
 #fileUpload {
@@ -552,8 +543,9 @@ button {
   margin-top: -10px;
 }
 #clearfile {
-  margin-top: -30px;
-  margin-left: 280px;
+  margin-top: -50px;
+  /* margin-left: 80px; */
+  float: right;
   width: 25px;
 }
 
