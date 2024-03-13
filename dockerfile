@@ -1,6 +1,6 @@
 #Step 1 Build vue Project
 FROM node:lts-alpine AS build
-WORKDIR /Frontend
+WORKDIR /frontend
 COPY package*.json ./
 RUN npm install
 #RUN npm i daisyui
@@ -14,6 +14,6 @@ RUN npm run build
 
 #Step 2 Create Nginx server
 FROM nginx:stable-alpine as production-stage
-COPY --from=build /Frontend/dist/ /usr/share/nginx/html
+COPY --from=build /frontend/dist/ /usr/share/nginx/html
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
