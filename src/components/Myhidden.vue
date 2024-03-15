@@ -419,6 +419,7 @@ const Login = () => appRouter.push({ name: "login" });
                   </g>
                 </g>
               </svg>
+              <span class="text-sm font-light flex items-center">Detail</span>
             </div>
           </div>
 
@@ -460,7 +461,14 @@ const Login = () => appRouter.push({ name: "login" });
                           </g>
                         </g>
                       </svg>
-                      <span class="username-comment">
+                      <span class="username-comment" v-if="role === 'st_group'">
+                       {{ hide.emailReportCourseFile }}
+                      </span>
+
+                      <span
+                        class="username-comment"
+                        v-if="role === 'staff_group'"
+                      >
                         {{ hide.emailReportCourseFile.slice(0, 5) }}
                         <div class="dot"></div>
 
@@ -1114,6 +1122,7 @@ const Login = () => appRouter.push({ name: "login" });
                   </g>
                 </g>
               </svg>
+              <span class="text-sm font-light flex items-center">Detail</span>
             </div>
           </div>
 
@@ -1155,7 +1164,13 @@ const Login = () => appRouter.push({ name: "login" });
                           </g>
                         </g>
                       </svg>
-                      <span class="username-comment">
+                      <span class="username-comment" v-if="role === 'st_group'">
+                        {{ hide.emailReportReview }}
+                      </span>
+                      <span
+                        class="username-comment"
+                        v-if="role === 'staff_group'"
+                      >
                         {{ hide.emailReportReview.slice(0, 5) }}
                         <div class="dot"></div>
 
@@ -1879,6 +1894,7 @@ const Login = () => appRouter.push({ name: "login" });
   height: 70px;
   float: left;
   margin: 15px;
+  margin-left: 20px;
 }
 
 .title_summary {
@@ -1994,7 +2010,7 @@ const Login = () => appRouter.push({ name: "login" });
   z-index: 1;
   float: left;
   margin-top: 23px;
-  margin-left: 10px;
+  margin-left: 5px;
   margin-right: 20px;
 }
 
@@ -2769,7 +2785,7 @@ const Login = () => appRouter.push({ name: "login" });
   border-radius: 8px;
   opacity: 1;
   margin-top: -73px;
-  margin-right: 45px;
+  margin-right: -100px;
   font-size: 13px;
   font-weight: 400;
   color: #697b98;
@@ -2810,16 +2826,17 @@ const Login = () => appRouter.push({ name: "login" });
   height: 35px;
   /* UI Properties */
   /* box-shadow: 0px 0px 15px #457aef0d; */
-  /* border: 1px solid #d20000; */
-  /* border-radius: 10px; */
+  border: 1px solid #d20000;
+  padding-right: 10px;
+  border-radius: 10px;
   opacity: 1;
   float: right;
+  margin-top: 10px;
 }
 
 .report-detail:hover {
   opacity: 0.5;
   cursor: pointer;
-
 }
 
 .report-detail svg {
@@ -2839,18 +2856,19 @@ const Login = () => appRouter.push({ name: "login" });
   width: auto;
   height: 35px;
   /* UI Properties */
-  /* box-shadow: 0px 0px 15px #457aef0d; */
-  /* border: 1px solid #d20000; */
-  /* border-radius: 10px; */
+  box-shadow: 0px 0px 15px #457aef0d;
+  border: 1px solid #d20000;
+  padding-right: 10px;
+  border-radius: 10px;
   opacity: 1;
   float: right;
-  margin-top: 13px;
+  margin-top: 90px;
+  margin-right: 10px;
 }
 
 .hidereview-detail:hover {
   opacity: 0.5;
   cursor: pointer;
-
 }
 
 .hidereview-detail svg {

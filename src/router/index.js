@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Dashboard from "../views/Dashboard.vue";
+import Home from "../views/Home.vue";
 import Summary from "../views/Summary.vue";
 import Review from "../views/Review.vue";
 import ReviewDetail from "../components/ReviewDetail.vue";
@@ -14,14 +14,15 @@ import Mycategory from "../components/Mycategory.vue";
 import nopageComponent from '../views/NoPage.vue'
 import nopermissionComponent from '../views/NoPermission.vue'
 import Myhidden from '../components/Myhidden.vue';
+import MyhiddenStaff from '../components/MyhiddenStaff.vue';
 
 const history = createWebHistory("/sy2/");
 
 const routes = [
   {
-    path: "/dashboard",
-    name: "Dashboard",
-    component: Dashboard,
+    path: "/home",
+    name: "Home",
+    component: Home,
     meta: { requiresAuth: true },
   },
   {
@@ -97,6 +98,12 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
+    path: "/my-hidden-staff",
+    name: "MyhiddenStaff",
+    component: MyhiddenStaff,
+    meta: { requiresAuth: true },
+  },
+  {
     path: "/:catchAll(.*)",
     name: "catchAll",
     component: nopageComponent 
@@ -108,14 +115,14 @@ const routes = [
   }
 ];
 
-const router = createRouter({ history, routes, linkActiveClass: "active_nav" });
+const router = createRouter({ history, routes });
 
 router.beforeEach((to, from, next) => {
   const isAuthenticated = localStorage.getItem("token") !== null;
   const userRole = localStorage.getItem("role");
 
   if (to.path === "/" && isAuthenticated) {
-    next({ name: from.name || "Dashboard" });
+    next({ name: from.name || "Home" });
   } else if (to.matched.some((record) => record.meta.requiresAuth)) {
     if (!isAuthenticated) {
       next({ name: "login" });
@@ -142,8 +149,7 @@ const restrictedRoutesForAdmin = [
   "AddReview",
   "AddSummary",
   "EditReview",
-  "EditSummary",
-  "Myhidden"
+  "EditSummary"
 ];
 const restrictedRoutesForStudent = ["Report"];
 

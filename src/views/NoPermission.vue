@@ -101,7 +101,7 @@
 
     <h1>No Permission</h1>
     <p>Sorry, You do not have permission to access this page.</p>
-    <router-link to="/dashboard" class="button_home flex items-center">
+    <router-link to="/home" class="button_home flex items-center">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="33"

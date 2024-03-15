@@ -1757,6 +1757,7 @@ const Login = () => appRouter.push({ name: "login" });
   opacity: 1;
   display: flex inline;
   z-index: 1;
+  margin-left: -5px;
 }
 
 .line-comment {
@@ -2107,6 +2108,8 @@ const Login = () => appRouter.push({ name: "login" });
   height: 70px;
   float: left;
   margin: 15px;
+  margin-left: 20px;
+
 }
 
 .username-comment {
@@ -2134,7 +2137,7 @@ const Login = () => appRouter.push({ name: "login" });
   z-index: 1;
   float: left;
   margin-top: 23px;
-  margin-left: 10px;
+  margin-left: 5px;
   margin-right: 20px;
   /* margin-right: -50px; */
 }

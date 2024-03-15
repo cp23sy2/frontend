@@ -97,7 +97,7 @@
 
     <h1>Page Not Found</h1>
     <p>Sorry, the page you are looking for could not be found.</p>
-    <router-link to="/dashboard" class="button_home flex items-center">
+    <router-link to="/home" class="button_home flex items-center">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="33"

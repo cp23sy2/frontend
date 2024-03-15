@@ -4,7 +4,6 @@ import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
 import moment from "moment";
 
-
 const route = useRoute();
 
 const isActive = (path) => {
@@ -247,43 +246,54 @@ const Myhiddens = () => {
   showPopup.value = !showPopup.value;
   appRouter.push({ name: "Myhidden" });
 };
+
+const MyhiddenStaff = () => {
+  // toggleDropdown();
+  showPopup.value = !showPopup.value;
+  appRouter.push({ name: "MyhiddenStaff" });
+};
 </script>
 
 <template>
   <section class="navbar">
     <div class="logo">
-      <img src="../assets/logo.jpg" style="width: 186px; height: 46px" />
+      <router-link
+        :to="{ name: 'Home' }"
+        style="text-decoration: none; color: inherit"
+        ><img src="../assets/logo.jpg" style="width: 186px; height: 46px"
+      /></router-link>
+      <!-- <img src="../assets/logo.jpg" style="width: 186px; height: 46px" /> -->
     </div>
 
     <ul>
-      <li :class="{ active: isActive('/dashboard') }">
+      <li :class="{ active: isActive('/home') }">
         <svg
-          id="ss"
           xmlns="http://www.w3.org/2000/svg"
-          width="19.5"
-          height="19.5"
-          viewBox="0 0 19.5 19.5"
-          :class="{ active_icon: isActive('/dashboard') }"
+          width="20.5"
+          height="21.505"
+          viewBox="0 0 20.5 21.505"
+          :class="{ active_icon: isActive('/home') }"
         >
           <g
-            id="Iconly_Light-Outline_Category"
-            data-name="Iconly/Light-Outline/Category"
-            transform="translate(-2 -2)"
+            id="Iconly_Light-Outline_Home"
+            data-name="Iconly/Light-Outline/Home"
+            transform="translate(-2 -1)"
           >
-            <g id="Category" transform="translate(2 2)">
+            <g id="Home" transform="translate(2 1)">
               <path
-                id="Combined-Shape"
-                d="M4.25,11c4.069,0,4.25,1.38,4.25,4.25,0,1.438,0,2.461-.6,3.21-.695.863-1.96,1.04-3.646,1.04S1.3,19.323.6,18.46C0,17.711,0,16.689,0,15.275l.75-.025H0C0,12.38.181,11,4.25,11Zm11,0c4.069,0,4.25,1.38,4.25,4.25,0,1.438,0,2.461-.6,3.21-.695.863-1.96,1.04-3.646,1.04S12.3,19.323,11.6,18.46c-.6-.749-.6-1.771-.6-3.185l.75-.025H11C11,12.38,11.181,11,15.25,11ZM4.456,12.5H4.25c-2.609,0-2.743.187-2.75,2.377v.853a3.392,3.392,0,0,0,.27,1.79c.265.328,1.052.48,2.479.48s2.214-.153,2.479-.481A4.513,4.513,0,0,0,7,15.274C7,12.774,7,12.512,4.456,12.5Zm11,0H15.25c-2.609,0-2.743.187-2.75,2.377v.853a3.392,3.392,0,0,0,.27,1.79c.265.328,1.052.48,2.479.48s2.214-.153,2.479-.481A4.513,4.513,0,0,0,18,15.274C18,12.774,18,12.512,15.456,12.5ZM4.25,0C8.319,0,8.5,1.38,8.5,4.25c0,1.438,0,2.461-.6,3.21C7.2,8.323,5.936,8.5,4.25,8.5S1.3,8.323.6,7.46C0,6.711,0,5.689,0,4.275L.75,4.25H0C0,1.38.181,0,4.25,0Zm11,0c4.069,0,4.25,1.38,4.25,4.25,0,1.438,0,2.461-.6,3.21-.695.863-1.96,1.04-3.646,1.04S12.3,8.323,11.6,7.46C11,6.711,11,5.689,11,4.275l.75-.025H11C11,1.38,11.181,0,15.25,0ZM4.456,1.5H4.25c-2.609,0-2.743.187-2.75,2.377V4.73a3.392,3.392,0,0,0,.27,1.79C2.036,6.848,2.823,7,4.25,7s2.214-.153,2.479-.481A4.513,4.513,0,0,0,7,4.274C7,1.774,7,1.512,4.456,1.5Zm11,0H15.25c-2.609,0-2.743.187-2.75,2.377V4.73a3.392,3.392,0,0,0,.27,1.79c.265.328,1.052.48,2.479.48s2.214-.153,2.479-.481A4.513,4.513,0,0,0,18,4.274C18,1.774,18,1.512,15.456,1.5Z"
+                id="Fill-1"
+                d="M11.717,14.291A2.179,2.179,0,0,1,13.9,16.46v3.076a.472.472,0,0,0,.47.469h1.906A2.709,2.709,0,0,0,19,17.317V8.593a1.676,1.676,0,0,0-.667-1.309L11.74,2.026a2.416,2.416,0,0,0-3.011,0L2.181,7.282A1.675,1.675,0,0,0,1.5,8.61v8.707a2.709,2.709,0,0,0,2.723,2.688H6.147a.486.486,0,0,0,.491-.479.807.807,0,0,1,.019-.171v-2.9a2.182,2.182,0,0,1,2.169-2.169Zm4.56,7.214H14.353A1.968,1.968,0,0,1,12.4,19.536V16.46a.677.677,0,0,0-.684-.669H8.831a.677.677,0,0,0-.674.669v3.066a.726.726,0,0,1-.031.215,1.989,1.989,0,0,1-1.979,1.764H4.223A4.21,4.21,0,0,1,0,17.317V8.6A3.154,3.154,0,0,1,1.259,6.1L7.794.855a3.912,3.912,0,0,1,4.88,0L19.256,6.1A3.158,3.158,0,0,1,20.5,8.582v8.735a4.21,4.21,0,0,1-4.223,4.188Z"
                 fill-rule="evenodd"
               />
             </g>
           </g>
         </svg>
+
         <span>
           <router-link
-            :to="{ name: 'Dashboard' }"
+            :to="{ name: 'Home' }"
             style="text-decoration: none; color: inherit"
-            >Dashboard</router-link
+            >Home</router-link
           >
         </span>
       </li>
@@ -409,34 +419,68 @@ const Myhiddens = () => {
         <span>
           <router-link
             :to="{ name: 'Report' }"
-            style="text-decoration: none; color: inherit"
-            >Report</router-link
-          >
+            style="text-decoration: none; color: inherit; display: flex"
+            >Report
+            <svg
+              v-if="summaries.length > 0 || reviews.length > 0"
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 20 20"
+              style="margin: 0; margin-left: 10px;"
+            >
+              <g
+                id="Iconly_Bold_Info-Circle"
+                data-name="Iconly/Bold/Info-Circle"
+                transform="translate(-2 -1.999)"
+              >
+                <g id="Info-Circle" transform="translate(2 1.999)">
+                  <path
+                    id="Path_199"
+                    data-name="Path 199"
+                    d="M10,0A10,10,0,1,1,0,10,10,10,0,0,1,10,0Zm0,12.931a.871.871,0,0,0-.87.87.875.875,0,1,0,.87-.87Zm0-7.6a.888.888,0,0,0-.88.88h0v4.42a.875.875,0,0,0,1.75,0h0V6.21A.88.88,0,0,0,10,5.33Z"
+                    fill="#c61d1e"
+                  />
+                </g>
+              </g>
+            </svg></router-link>
         </span>
+      </li>
 
+      <!-- hidden -->
+      <li
+        :class="{ active: isActive('/my-hidden') }"
+        v-if="role === 'staff_group'"
+      >
         <svg
-          v-if="summaries.length > 0 || reviews.length > 0"
           xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
-          viewBox="0 0 20 20"
-          class="ml-24 absolute"
+          width="20.014"
+          height="18.186"
+          viewBox="0 0 20.014 18.186"
+          :class="{ active_icon: isActive('/my-hidden') }"
         >
           <g
-            id="Iconly_Bold_Info-Circle"
-            data-name="Iconly/Bold/Info-Circle"
-            transform="translate(-2 -1.999)"
+            id="Iconly_Light-Outline_Hide"
+            data-name="Iconly/Light-Outline/Hide"
+            transform="translate(-2 -3)"
           >
-            <g id="Info-Circle" transform="translate(2 1.999)">
+            <g id="Hide" transform="translate(2 3)">
               <path
-                id="Path_199"
-                data-name="Path 199"
-                d="M10,0A10,10,0,1,1,0,10,10,10,0,0,1,10,0Zm0,12.931a.871.871,0,0,0-.87.87.875.875,0,1,0,.87-.87Zm0-7.6a.888.888,0,0,0-.88.88h0v4.42a.875.875,0,0,0,1.75,0h0V6.21A.88.88,0,0,0,10,5.33Z"
-                fill="#c61d1e"
+                id="Combined-Shape"
+                d="M18.417.22a.75.75,0,0,1,0,1.061L2.643,17.054a.75.75,0,0,1-1.06-1.06l1.972-1.971A14.751,14.751,0,0,1,.062,8.934a.745.745,0,0,1,0-.593A14.415,14.415,0,0,1,4.22,2.683a9.117,9.117,0,0,1,11.048-.375L17.357.22A.749.749,0,0,1,18.417.22Zm-.37,4.821a16.144,16.144,0,0,1,1.891,3.3.742.742,0,0,1,0,.6c-2.1,4.857-5.811,7.756-9.938,7.756a8.771,8.771,0,0,1-2.769-.451.75.75,0,1,1,.474-1.424,7.245,7.245,0,0,0,2.3.375c3.428,0,6.561-2.442,8.43-6.553a14.5,14.5,0,0,0-1.581-2.694.75.75,0,1,1,1.2-.9Zm-12.9-1.18A12.736,12.736,0,0,0,1.571,8.639a13.022,13.022,0,0,0,3.047,4.322l2.138-2.138a3.87,3.87,0,0,1-.669-2.185,3.912,3.912,0,0,1,6.1-3.248l2-2A7.586,7.586,0,0,0,5.149,3.861Zm8.088,4.6a.75.75,0,0,1,.606.871A3.919,3.919,0,0,1,10.7,12.48a.778.778,0,0,1-.135.012A.75.75,0,0,1,10.434,11a2.409,2.409,0,0,0,1.932-1.937A.754.754,0,0,1,13.238,8.462ZM10,6.222A2.418,2.418,0,0,0,7.586,8.639,2.389,2.389,0,0,0,7.848,9.73l3.246-3.246A2.413,2.413,0,0,0,10,6.222Z"
+                fill-rule="evenodd"
               />
             </g>
           </g>
         </svg>
+
+        <span>
+          <router-link
+            :to="{ name: 'Myhidden' }"
+            style="text-decoration: none; color: inherit"
+            >Hidden</router-link
+          >
+        </span>
       </li>
     </ul>
 
@@ -591,7 +635,7 @@ const Myhiddens = () => {
                 .locale("th")
                 .format("DD MMMM YYYY เวลา HH:mm น.")
             }}
-             <!-- {{
+            <!-- {{
               moment(notification.fileCreatedOn).diff(moment(), "days") > -7
                 ? moment(notification.fileCreatedOn).locale("th").fromNow()
                 : moment(notification.fileCreatedOn)
@@ -602,7 +646,7 @@ const Myhiddens = () => {
           </span>
         </template>
         <!-- ตรวจสอบว่าประเภทของแจ้งเตือนเป็น 'review' หรือไม่ -->
-        <template v-if="notification.gradesReceived && notification.hide" >
+        <template v-if="notification.gradesReceived && notification.hide">
           <span>
             โพสต์รีวิวรายวิชา {{ notification.courseName }}
             {{ notification.courseFullName }}<br />วันที่
@@ -863,6 +907,7 @@ svg {
   vertical-align: middle;
   margin-right: 10px;
   fill: #b8bfd6;
+  margin-top: 2px;
   /* border: 1px solid red; */
 }
 
@@ -879,7 +924,7 @@ ul {
   font-size: 16px;
   font-weight: 400;
   color: #b8bfd6;
-  padding-left: 50px;
+  padding-left: 80px;
   /* margin-left: 20px; */
 }
 
@@ -999,7 +1044,7 @@ ul li:hover span {
   display: block;
   overflow: hidden;
   word-wrap: break-word;
-  border: 1px solid transparent; 
+  border: 1px solid transparent;
 }
 
 .noti_block:hover {
@@ -1007,7 +1052,6 @@ ul li:hover span {
   background-color: #eef4ff;
   border: 1px solid #4675c0 !important;
 }
-
 
 .No-notifications {
   color: #b8bfd6;
@@ -1028,4 +1072,5 @@ ul li:hover span {
   transform: translate(-50%, -50%);
   /* bottom: 78%; */
 }
+
 </style>

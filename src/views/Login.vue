@@ -45,7 +45,7 @@ const login = async () => {
       showSuccess.value = true;
 
       setTimeout(function () {
-        Dashboard();
+        Home();
       }, 1500);
 
     } else {
@@ -66,7 +66,7 @@ const login = async () => {
 };
 
 const appRouter = useRouter();
-const Dashboard = () => appRouter.push({ name: "Dashboard" });
+const Home = () => appRouter.push({ name: "Home" });
 </script>
 
 <template>

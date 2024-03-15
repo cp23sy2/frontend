@@ -23,8 +23,7 @@ onBeforeMount(async () => {
 
       const reviewData = await reviewResponse.json();
       // review.value = reviewData;
-      review.value = reviewData.filter(review => !review.hide);
-
+      review.value = reviewData.filter((review) => !review.hide);
     }
     if (reviewResponse.status === 401) {
       // login();
@@ -47,7 +46,7 @@ onBeforeMount(async () => {
 
       const summaryData = await summaryResponse.json();
       // summary.value = summaryData;
-      summary.value = summaryData.filter(summary => !summary.hide);
+      summary.value = summaryData.filter((summary) => !summary.hide);
     }
     if (summaryResponse.status === 401) {
       // login();
@@ -739,9 +738,9 @@ const Login = () => appRouter.push({ name: "login" });
         <svg
           xmlns="http://www.w3.org/2000/svg"
           xmlns:xlink="http://www.w3.org/1999/xlink"
-          width="1132"
+          width="1128"
           height="475.5"
-          viewBox="0 0 1132 475.5"
+          viewBox="0 0 1128 475.5"
         >
           <defs>
             <filter
@@ -816,8 +815,8 @@ const Login = () => appRouter.push({ name: "login" });
             </filter>
           </defs>
           <g
-            id="Group_343"
-            data-name="Group 343"
+            id="Group_357"
+            data-name="Group 357"
             transform="translate(-114 -474.5)"
           >
             <g
@@ -1037,16 +1036,15 @@ own opinions"
               <tspan x="-55.248" y="30">own opinions</tspan>
             </text>
             <text
-              id="To_Improve"
-              data-name="To Improve"
-              transform="translate(1098 880)"
+              id="Report"
+              transform="translate(1123 880)"
               fill="#19335a"
               font-size="20"
               font-family="Poppins-Medium, Poppins"
               font-weight="500"
               letter-spacing="0.02em"
             >
-              <tspan x="0" y="0">To Improve</tspan>
+              <tspan x="0" y="0">Report</tspan>
             </text>
             <circle
               id="Ellipse_32-4"
@@ -1058,9 +1056,9 @@ own opinions"
               fill="rgba(254,211,99,0.2)"
             />
             <text
-              id="It_is_a_helper_that_can_improve_your_grades"
-              data-name="It is a helper that can
-improve your grades"
+              id="Inappropriate_posts_can_be_reported"
+              data-name="Inappropriate posts 
+can be reported"
               transform="translate(1157 914)"
               fill="#697a98"
               font-size="16"
@@ -1068,8 +1066,8 @@ improve your grades"
               font-weight="500"
               letter-spacing="0.02em"
             >
-              <tspan x="-88.472" y="0">It is a helper that can</tspan>
-              <tspan x="-87.184" y="30">improve your grades</tspan>
+              <tspan x="-84.944" y="0">Inappropriate posts</tspan>
+              <tspan x="-67.12" y="30">can be reported</tspan>
             </text>
             <g
               id="product-starred-svgrepo-com_1_"
@@ -1125,32 +1123,13 @@ improve your grades"
               transform="translate(813.827 759.635)"
               fill="#02bbb6"
             />
-            <g
-              id="up-trend-svgrepo-com"
-              transform="translate(1127.892 763.595)"
-            >
-              <path
-                id="primary"
-                d="M55.216,6,34.91,26.306l-8.7-8.7L3,40.811"
-                transform="translate(0 0)"
-                fill="none"
-                stroke="#fed363"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="6"
-              />
-              <path
-                id="primary-2"
-                data-name="primary"
-                d="M28.6,17.6V6H17"
-                transform="translate(26.612 0)"
-                fill="none"
-                stroke="#fed363"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="6"
-              />
-            </g>
+            <path
+              id="report-svgrepo-com"
+              d="M5.322,1A2.322,2.322,0,0,0,3,3.322V49.763a2.322,2.322,0,1,0,4.644,0V30.254a23.737,23.737,0,0,1,4.627-1.748c3.289-.822,5.929-.519,7.374,1.648,2.7,4.044,7.844,4.4,11.807,4.005A44.62,44.62,0,0,0,41.861,31.6,4.522,4.522,0,0,0,44.8,27.334V11.968a4.847,4.847,0,0,0-6.853-4.327,33.93,33.93,0,0,1-8.7,2.778c-3.1.431-4.894-.152-5.738-1.418C20.462,4.431,15.25,3.89,11.515,4.2a25.926,25.926,0,0,0-3.871.636V3.322A2.322,2.322,0,0,0,5.322,1ZM7.644,9.641V25.16a26.078,26.078,0,0,1,3.5-1.16c3.677-.919,9.164-1.223,12.364,3.577,1.111,1.667,3.672,2.34,7.482,1.96a39.913,39.913,0,0,0,9.162-2.258V11.968c0-.105-.213-.133-.29-.1a38.44,38.44,0,0,1-9.975,3.148c-3.487.486-7.822.189-10.243-3.442-1.6-2.4-4.513-3.016-7.744-2.747A22.293,22.293,0,0,0,7.644,9.641Z"
+              transform="translate(1141.9 760.079) rotate(8)"
+              fill="#fed363"
+              fill-rule="evenodd"
+            />
           </g>
         </svg>
       </div>

@@ -72,8 +72,7 @@ const getreportsummary = async () => {
 
     if (response.status === 200) {
       const data = await response.json();
-      // เช็คค่า hide และกรองข้อมูลตามเงื่อนไข
-      summaries.value = data.filter((summary) => !summary.hide);
+      summaries.value = data;
     } else if (response.status === 401) {
       signout();
     } else {
@@ -99,8 +98,7 @@ const getreportreview = async () => {
 
     if (response.status === 200) {
       const data = await response.json();
-      // reviews.value = data;
-      reviews.value = data.filter((review) => !review.hide);
+      reviews.value = data;
     } else if (response.status === 401) {
       signout();
     } else {
@@ -132,7 +130,7 @@ const getCategoryColor = (courseName) => {
     return "#A698F0";
   } else if (courseName.startsWith("INT")) {
     return "#B7DB92";
-  }else if (courseName.startsWith("LNG")) {
+  } else if (courseName.startsWith("LNG")) {
     return "#FF9F9F";
   }
 };
@@ -197,7 +195,7 @@ const toggleDropdown = (index) => {
 
 const hidesummary = async (id) => {
   try {
-    const confirmed = confirm("คุณแน่ใจหรือไม่ที่ต้องการซ่อนข้อมูลนี้?");
+    const confirmed = confirm("Admin ต้องการซ่อนเนื้อหา report ส่วนนี้หรือไม่?");
 
     if (!confirmed) {
       return;
@@ -216,7 +214,7 @@ const hidesummary = async (id) => {
 
     if (response.ok) {
       getreportsummary();
-      alert("ซ่อนข้อมูลสำเร็จ");
+      alert("Admin ซ่อนเนื้อหาแล้ว");
 
       const currentReviewsCount = summaries.value.length;
       if (currentReviewsCount === 1) {
@@ -232,7 +230,7 @@ const hidesummary = async (id) => {
 
 const hidereview = async (id) => {
   try {
-    const confirmed = confirm("คุณแน่ใจหรือไม่ที่ต้องการซ่อนข้อมูลนี้?");
+    const confirmed = confirm("Admin ต้องการซ่อนเนื้อหา report ส่วนนี้หรือไม่?");
 
     if (!confirmed) {
       return;
@@ -251,7 +249,7 @@ const hidereview = async (id) => {
 
     if (response.ok) {
       getreportreview();
-      alert("ซ่อนข้อมูลสำเร็จ");
+      alert("Admin ซ่อนเนื้อหาแล้ว");
       // window.location.reload();
       const currentReviewsCount = reviews.value.length;
       if (currentReviewsCount === 1) {
@@ -262,6 +260,54 @@ const hidereview = async (id) => {
     }
   } catch (error) {
     console.error("เกิดข้อผิดพลาดในการซ่อนข้อมูล:", error);
+  }
+};
+
+const rejectsummary  = async (id) => {
+  if (confirm("Admin ต้องการยกเลิก report เนื้อหานี้หรือไม่?") == true) {
+    const response = await fetch(
+      `${import.meta.env.VITE_BASE_URL}ReportCourseFile/${id}/summary`,
+      {
+        method: "DELETE",
+        headers: {
+          "content-type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      }
+    );
+    if (response.status === 200) {
+      getreportsummary();
+      alert("Admin ยกเลิก report สำเร็จ");
+
+      const currentReviewsCount = summaries.value.length;
+      if (currentReviewsCount === 1) {
+        window.location.reload();
+      }
+    } else console.log("cannot delete");
+  }
+};
+
+const rejectreview  = async (id) => {
+  if (confirm("Admin ต้องการยกเลิก report เนื้อหานี้หรือไม่?") == true) {
+    const response = await fetch(
+      `${import.meta.env.VITE_BASE_URL}ReportReview/${id}/review`,
+      {
+        method: "DELETE",
+        headers: {
+          "content-type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      }
+    );
+    if (response.status === 200) {
+      getreportreview();
+      alert("Admin ยกเลิก report สำเร็จ");
+      // window.location.reload();
+      const currentReviewsCount = reviews.value.length;
+      if (currentReviewsCount === 1) {
+        window.location.reload();
+      }
+    } else console.log("cannot delete");
   }
 };
 
@@ -486,6 +532,33 @@ onBeforeMount(() => {
 
                 Hide</a
               >
+
+              <a
+                href="#"
+                class="text-gray-700 block px-4 py-2.5 text-sm font-light flex items-center hover:bg-gray-100 dark dark:hover:bg-gray-200"
+                v-if="role === 'staff_group'"
+                @click="rejectsummary(summary.id)"
+              >
+                <svg
+                  style="margin-right: 15px; margin-left: 8px; width: 16px"
+                  width="20"
+                  height="17.273"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="9"
+                    stroke="#33363F"
+                    stroke-width="2"
+                  />
+                  <path d="M18 18L6 6" stroke="#33363F" stroke-width="2" />
+                </svg>
+
+                Reject</a
+              >
             </div>
           </div>
           <img src="../assets/student.png" id="profile" />
@@ -588,7 +661,7 @@ onBeforeMount(() => {
             @click="togglePopupSummary(summary.id)"
           >
             <span class="text-sm font-light flex items-center"
-              >Detail Report</span
+              > ({{ summary.reportSummaryCount }}) Report</span
             >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -972,6 +1045,33 @@ onBeforeMount(() => {
 
                 Hide</a
               >
+              <a
+                href="#"
+                class="text-gray-700 block px-4 py-2.5 text-sm font-light flex items-center hover:bg-gray-100 dark dark:hover:bg-gray-200"
+                v-if="role === 'staff_group'"
+                @click="rejectreview(review.id)"
+
+              >
+                <svg
+                  style="margin-right: 15px; margin-left: 8px; width: 16px"
+                  width="20"
+                  height="17.273"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="9"
+                    stroke="#33363F"
+                    stroke-width="2"
+                  />
+                  <path d="M18 18L6 6" stroke="#33363F" stroke-width="2" />
+                </svg>
+
+                Reject</a
+              >
             </div>
           </div>
 
@@ -1132,7 +1232,7 @@ onBeforeMount(() => {
             @click="togglePopupReview(review.id)"
           >
             <span class="text-sm font-light flex items-center"
-              >Detail Report</span
+              >({{ review.reportReviewCount }}) Report</span
             >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -1711,6 +1811,8 @@ onBeforeMount(() => {
   height: 70px;
   float: left;
   margin: 15px;
+  margin-left: 20px;
+  
 }
 
 .title_summary {
@@ -1826,7 +1928,7 @@ onBeforeMount(() => {
   z-index: 1;
   float: left;
   margin-top: 23px;
-  margin-left: 10px;
+  margin-left: 5px;
   margin-right: 20px;
 }
 
@@ -1917,7 +2019,6 @@ onBeforeMount(() => {
 .inforeport:hover {
   opacity: 0.5;
   cursor: pointer;
-
 }
 
 .report-detail {

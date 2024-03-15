@@ -543,10 +543,14 @@ button {
   margin-top: -10px;
 }
 #clearfile {
-  margin-top: -50px;
+  margin-top: -53px;
   /* margin-left: 80px; */
   float: right;
   width: 25px;
+}
+
+#clearfile:hover {
+  opacity: 0.5;
 }
 
 .toast-container {

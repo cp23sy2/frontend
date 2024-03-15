@@ -2,8 +2,6 @@
 import { ref, onBeforeMount, computed } from "vue";
 import { useRouter } from "vue-router";
 import moment from "moment";
-import ToastSuccess from "../components/ToastSuccess.vue";
-import ToastError from "../components/ToastError.vue";
 
 const reviews = ref([]);
 const summarys = ref([]);
@@ -12,22 +10,10 @@ const summaryButtonColor = ref("#3498db");
 const reviewButtonColor = ref("#3498db");
 const email = localStorage.getItem("email");
 const role = localStorage.getItem("role");
-const isDropdownOpen = ref([]);
 const comments = ref([]);
-// const showPopup = ref(false);
 const commentofsummary = ref([]);
-const showSuccess = ref(false);
-const showError = ref(false);
-const errorMessage = ref("Add Comment Failed");
-const successMessage = ref("Add Comment Success");
-
-const hideError = () => {
-  showError.value = false;
-};
-
-const hideSuccess = () => {
-  showSuccess.value = false;
-};
+const hideofsummary = ref([]);
+const hideofreview = ref([]);
 
 const currentPageSummary = ref(1);
 const currentPageReview = ref(1);
@@ -73,6 +59,30 @@ const setPageReview = (page) => {
   }
 };
 
+const showPopuphide = ref(null);
+
+const togglePopupSummary = (summaryId, shouldGetComments = true) => {
+  if (showPopuphide.value === summaryId) {
+    showPopuphide.value = null;
+  } else {
+    showPopuphide.value = summaryId;
+    if (shouldGetComments) {
+      getdetailhideofsummary(summaryId);
+    }
+  }
+};
+
+const togglePopupReview = (reviewId, shouldGetComments = true) => {
+  if (showPopuphide.value === reviewId) {
+    showPopuphide.value = null;
+  } else {
+    showPopuphide.value = reviewId;
+    if (shouldGetComments) {
+      getdetailhideofreview(reviewId);
+    }
+  }
+};
+
 const showPopup = ref(null);
 
 const togglePopup = (summaryId, shouldGetComments = true) => {
@@ -85,46 +95,63 @@ const togglePopup = (summaryId, shouldGetComments = true) => {
     }
   }
 };
-const editComment = (comment) => {
-  comment.isEditing = true;
-  comment.editingComment = comment.commentDetail;
-};
 
-const saveComment = async (commentId, newComment) => {
+const getdetailhideofsummary = async (summaryId) => {
   try {
     const response = await fetch(
-      `${import.meta.env.VITE_BASE_URL}comment/${commentId}`,
+      `${import.meta.env.VITE_BASE_URL}ReportCourseFile/${summaryId}/summary/`,
       {
-        method: "PUT",
+        method: "GET",
         headers: {
-          "Content-Type": "application/json",
+          "content-type": "application/json",
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
-        body: JSON.stringify({
-          commentDetail: newComment,
-        }),
       }
     );
 
-    if (response.status === 200) {
-      console.log("Comment updated successfully");
-      const editedComment = commentofsummary.value.find(
-        (comment) => comment.id === commentId
-      );
-      if (editedComment) {
-        editedComment.commentDetail = newComment;
-        editedComment.isEditing = false;
-      }
+    if (response.ok) {
+      const data = await response.json();
+      hideofsummary.value = data;
     } else {
-      console.error("Failed to update comment");
+      if (response.status === 404) {
+        hideofsummary.value = [];
+        console.log("No comments found");
+      } else {
+        console.error("Error: Failed to parse data");
+      }
     }
   } catch (error) {
-    console.error("Error updating comment:", error);
+    console.error("Error fetching data:", error);
   }
 };
 
-const cancelEdit = (comment) => {
-  comment.isEditing = false;
+const getdetailhideofreview = async (reviewId) => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_BASE_URL}ReportReview/${reviewId}/review/`,
+      {
+        method: "GET",
+        headers: {
+          "content-type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      }
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+      hideofreview.value = data;
+    } else {
+      if (response.status === 404) {
+        hideofreview.value = [];
+        console.log("No comments found");
+      } else {
+        console.error("Error: Failed to parse data");
+      }
+    }
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
 };
 
 const getcommentofsummary = async (summaryId) => {
@@ -157,47 +184,10 @@ const getcommentofsummary = async (summaryId) => {
   }
 };
 
-const sendComment = async (index, summaryId) => {
-  const commentValue = comments.value[index];
-
-  if (commentValue.trim() !== "") {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_BASE_URL}comment`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-        body: JSON.stringify({
-          commentDetail: commentValue,
-          courseFileIdcourseFile: summaryId,
-          emailOwner: email,
-        }),
-      });
-
-      if (response.status === 201) {
-        console.log("Comment posted successfully");
-        comments.value[index] = "";
-        showSuccess.value = true;
-        setTimeout(() => {
-          hideSuccess();
-          getsummary();
-        }, 1500);
-      } else {
-        console.error("Failed to post comment");
-      }
-    } catch (error) {
-      console.error("Error posting comment:", error);
-    }
-  } else {
-    console.log("Comment is empty");
-  }
-};
-
 const getsummary = async () => {
   try {
     const response = await fetch(
-      `${import.meta.env.VITE_BASE_URL}summary/owner`,
+      `${import.meta.env.VITE_BASE_URL}summary/hiddenAll`,
       {
         method: "GET",
         headers: {
@@ -209,8 +199,8 @@ const getsummary = async () => {
 
     if (response.status === 200) {
       const data = await response.json();
-      // summarys.value = data;
-      summarys.value = data.filter((summary) => !summary.hide);
+      summarys.value = data;
+      //   summarys.value = data.filter((summary) => !summary.hide);
     }
     if (response.status === 401) {
       signout();
@@ -223,7 +213,7 @@ const getsummary = async () => {
 const getreview = async () => {
   try {
     const response = await fetch(
-      `${import.meta.env.VITE_BASE_URL}review/owner`,
+      `${import.meta.env.VITE_BASE_URL}review/hiddenAll`,
       {
         method: "GET",
         headers: {
@@ -235,87 +225,13 @@ const getreview = async () => {
 
     if (response.status === 200) {
       const data = await response.json();
-      // reviews.value = data;
-      reviews.value = data.filter((review) => !review.hide);
+      reviews.value = data;
+      //   reviews.value = data.filter((review) => !review.hide);
     } else {
       console.error("Get Review failed");
     }
-    isDropdownOpen.value = Array(summarys.value.length).fill(false);
   } catch (error) {
     console.error("Error fetching review data:", error);
-  }
-};
-
-const deleteSummary = async (id, index) => {
-  if (confirm("You want to delete") == true) {
-    const response = await fetch(
-      `${import.meta.env.VITE_BASE_URL}summary/${id}`,
-      {
-        method: "DELETE",
-        headers: {
-          "content-type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      }
-    );
-    if (response.status === 200) {
-      isDropdownOpen.value[index] = false;
-      alert("Delete!!!", `You delete summary success`, "success");
-
-      setTimeout(function () {
-        summarys.value = summarys.value.filter((e) => e.id !== id);
-      }, 500);
-
-      console.log("delete success");
-    } else console.log("cannot delete");
-  }
-};
-
-const deletecomment = async (id) => {
-  if (confirm("You want to delete comment") == true) {
-    const response = await fetch(
-      `${import.meta.env.VITE_BASE_URL}comment/${id}`,
-      {
-        method: "DELETE",
-        headers: {
-          "content-type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      }
-    );
-    if (response.status === 200) {
-      alert("Delete!!!", `You delete summary success`, "success");
-      getsummary();
-
-      commentofsummary.value = commentofsummary.value.filter(
-        (e) => e.id !== id
-      );
-    } else console.log("cannot delete");
-  }
-};
-
-const deleteReview = async (id, index) => {
-  if (confirm("You want to delete") == true) {
-    const response = await fetch(
-      `${import.meta.env.VITE_BASE_URL}review/${id}`,
-      {
-        method: "DELETE",
-        headers: {
-          "content-type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      }
-    );
-    if (response.status === 200) {
-      isDropdownOpen.value[index] = false;
-      alert("Delete!!!", `You delete event success`, "success");
-
-      setTimeout(function () {
-        reviews.value = reviews.value.filter((e) => e.id !== id);
-      }, 500);
-
-      console.log("delete success");
-    } else console.log("cannot delete");
   }
 };
 
@@ -360,14 +276,6 @@ const getFileTypeIcon = (fileName) => {
     default:
       return "https://img.icons8.com/external-flat-icons-inmotus-design/67/external-complete-edit-files-flat-icons-inmotus-design.png";
   }
-};
-
-const toggleDropdown = (index) => {
-  // ตรวจสอบว่า Object มีค่าหรือยัง ถ้าไม่มีให้สร้าง Object ใหม่
-  if (!isDropdownOpen.value[index]) {
-    isDropdownOpen.value[index] = false;
-  }
-  isDropdownOpen.value[index] = !isDropdownOpen.value[index];
 };
 
 onBeforeMount(() => {
@@ -438,20 +346,8 @@ const Login = () => appRouter.push({ name: "login" });
 
 <template>
   <div class="container mx-auto mt-28 mt-8 mb-10">
-    <div class="toast-container">
-      <ToastError
-        :showError="showError"
-        :errorMessage="errorMessage"
-        @hide-error="hideError"
-      />
-      <ToastSuccess
-        :showSuccess="showSuccess"
-        :successMessage="successMessage"
-        @hide-success="hideSuccess"
-      />
-    </div>
     <div class="line-review"></div>
-    <p class="review">My Post</p>
+    <p class="review">Hidden</p>
 
     <div class="all">
       <button
@@ -498,113 +394,154 @@ const Login = () => appRouter.push({ name: "login" });
         >
           <!-- ส่วนของ dropdown เพื่อจะแก้ไข + ลบ -->
           <div class="dropdown">
-            <img
-              class="info"
-              src="../assets/info.png"
-              @click="() => toggleDropdown(index)"
-            />
+            <div
+              class="report-detail flex items-center"
+              @click="togglePopupSummary(summary.id)"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+              >
+                <g
+                  id="Iconly_Bold_Info-Circle"
+                  data-name="Iconly/Bold/Info-Circle"
+                  transform="translate(-2 -1.999)"
+                >
+                  <g id="Info-Circle" transform="translate(2 1.999)">
+                    <path
+                      id="Path_199"
+                      data-name="Path 199"
+                      d="M10,0A10,10,0,1,1,0,10,10,10,0,0,1,10,0Zm0,12.931a.871.871,0,0,0-.87.87.875.875,0,1,0,.87-.87Zm0-7.6a.888.888,0,0,0-.88.88h0v4.42a.875.875,0,0,0,1.75,0h0V6.21A.88.88,0,0,0,10,5.33Z"
+                      fill="#c61d1e"
+                    />
+                  </g>
+                </g>
+              </svg>
+              <span class="text-sm font-light flex items-center"
+              >Detail</span
+            >
+            </div>
           </div>
 
-          <div class="dropdown-click">
-            <div
-              class="absolute right-3 z-12 mt-2 w-32 divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-              v-if="isDropdownOpen[index]"
-            >
-              <router-link
-                :to="{ name: 'EditSummary', params: { summaryid: summary.id } }"
-                tag="a"
-                class="text-gray-700 block px-4 py-2.5 text-sm font-light flex items-center hover:bg-gray-100 dark dark:hover:bg-gray-200"
-                v-if="role === 'st_group' && summary.emailOwner === email"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="19.5"
-                  height="18.94"
-                  viewBox="0 0 19.5 18.94"
-                  style="margin-right: 15px; margin-left: 8px; width: 16px"
-                >
-                  <g
-                    id="Iconly_Light-Outline_Edit"
-                    data-name="Iconly/Light-Outline/Edit"
-                    transform="translate(-2 -3)"
+          <div
+            v-if="showPopuphide === summary.id"
+            class="popup-container bg-black bg-opacity-20 backdrop-blur-sm"
+          >
+            <div class="popup">
+              <div class="popup-content">
+                <div v-if="hideofsummary.length > 0">
+                  <div class="comment_header">Detail Hidden</div>
+                  <div class="line-comment-popup"></div>
+                  <div
+                    v-for="(hide, hideIndex) in hideofsummary"
+                    :key="hideIndex"
                   >
-                    <g id="Edit" transform="translate(2 3)">
-                      <path
-                        id="Combined-Shape"
-                        d="M18.75,17.44a.75.75,0,0,1,0,1.5H11.5a.75.75,0,0,1,0-1.5ZM14.116.654l1.723,1.339A2.821,2.821,0,0,1,17.1,3.768a2.862,2.862,0,0,1-.368,2.2l-.015.022L16.712,6c-.068.089-.362.461-1.847,2.322a.591.591,0,0,1-.046.069.749.749,0,0,1-.081.09l-.321.4-.228.285L12.5,11.285l-.34.425L7.148,17.98a2.447,2.447,0,0,1-1.886.914l-3.639.046h-.01a.751.751,0,0,1-.73-.577L.064,14.892a2.371,2.371,0,0,1,.46-2.037L9.944,1.073l.011-.013A3,3,0,0,1,14.116.654ZM8.894,4.787l-7.2,9a.879.879,0,0,0-.171.755l.681,2.885,3.039-.038a.949.949,0,0,0,.733-.352l3.235-4.048.417-.521h0l.417-.522,3.109-3.891Zm2.216-2.77-1.279,1.6,4.261,3.271c.82-1.027,1.36-1.7,1.41-1.768a1.36,1.36,0,0,0,.142-1,1.411,1.411,0,0,0-.652-.887c-.071-.049-1.756-1.357-1.808-1.4A1.5,1.5,0,0,0,11.11,2.017Z"
-                        fill-rule="evenodd"
-                      />
-                    </g>
-                  </g>
-                </svg>
+                    <div class="detail-comment">
+                      <img src="../assets/student.png" id="profile_comment" />
 
-                Edit
-              </router-link>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="15.84"
+                        height="19.87"
+                        viewBox="0 0 15.84 19.87"
+                        class="user_comment"
+                      >
+                        <g
+                          id="Iconly_Light-Outline_Profile"
+                          data-name="Iconly/Light-Outline/Profile"
+                          transform="translate(-4 -2)"
+                        >
+                          <g id="Profile" transform="translate(4 2)">
+                            <path
+                              id="Combined-Shape"
+                              d="M15.84,16.193c0,3.3-4.52,3.677-7.919,3.677H7.678C5.512,19.865,0,19.728,0,16.173c0-3.229,4.338-3.66,7.711-3.677h.453C10.33,12.5,15.84,12.638,15.84,16.193ZM7.921,14C3.66,14,1.5,14.728,1.5,16.173s2.16,2.2,6.421,2.2,6.419-.732,6.419-2.177S12.181,14,7.921,14Zm0-14a5.31,5.31,0,0,1,0,10.619H7.889A5.31,5.31,0,0,1,7.921,0Zm0,1.428a3.882,3.882,0,0,0-.029,7.764l.029.714V9.192a3.882,3.882,0,0,0,0-7.764Z"
+                              fill-rule="evenodd"
+                              fill="#697A98"
+                            />
+                          </g>
+                        </g>
+                      </svg>
+                      <span class="username-comment">
+                        <!-- anonymous -->
+                        {{ hide.emailReportCourseFile.slice(0, 5) }}
+                        <div class="dot"></div>
 
-              <a
-                href="#"
-                class="text-gray-700 block px-4 py-2.5 text-sm font-light flex items-center hover:bg-gray-100 dark dark:hover:bg-gray-200"
-                @click="() => deleteSummary(summary.id, index)"
-                v-if="
-                  role === 'staff_group' ||
-                  (role === 'st_group' && summary.emailOwner === email)
-                "
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="18.458"
-                  height="20"
-                  viewBox="0 0 18.458 20"
-                  style="margin-right: 15px; margin-left: 8px; width: 15px"
+                        {{
+                          moment(hide.reportCourseFileCreatedOn).diff(
+                            moment(),
+                            "days"
+                          ) > -7
+                            ? moment(hide.reportCourseFileCreatedOn)
+                                .locale("th")
+                                .fromNow()
+                            : moment(hide.reportCourseFileCreatedOn)
+                                .locale("th")
+                                .format("DD MMMM YYYY")
+                        }}
+                      </span>
+
+                      <br /><br />
+                      <div
+                        class="detail-comment-box"
+                        v-if="hide.inappropriateCourseFile === true"
+                      >
+                        <span
+                          class="bg-red-100 text-red-600 text-xs font-small me-2 px-2.5 py-0.5 rounded-md border border-red-400 pt-1 pb-1 pl-3 pr-3"
+                          >เนื้อหาไม่เหมาะสม</span
+                        >
+                      </div>
+                      <div
+                        class="detail-comment-box"
+                        v-if="hide.notMatchCourseFile === true"
+                      >
+                        <span
+                          class="bg-yellow-100 text-yellow-600 text-xs font-small me-2 px-2.5 py-0.5 rounded-md border border-yellow-400 pt-1 pb-1 pl-3 pr-3"
+                          >เนื้อหาไม่ตรงกับรายวิชา</span
+                        >
+                      </div>
+                      <br />
+                    </div>
+                  </div>
+                </div>
+
+                <div v-else>
+                  <div class="comment_header">Detail Hidden</div>
+                  <div class="line-comment-popup"></div>
+
+                  <div class="detail-hidden-admin">
+                    โพสต์ของคุณถูกซ่อนโดย admin เนื่องจาก <br />
+                    <span style="font-weight: 500; color: #d20000"
+                      >มีเนื้อหาที่ไม่เหมาะสม</span
+                    >
+                    หรือ
+                    <span style="font-weight: 500; color: #d20000"
+                      >เนื้อหาไม่ตรงกับรายวิชา</span
+                    >
+                  </div>
+                </div>
+
+                <!-- Close Button -->
+                <div
+                  class="close-button"
+                  @click="togglePopupSummary(summary.id, false)"
                 >
-                  <g
-                    id="Iconly_Light-Outline_Delete"
-                    data-name="Iconly/Light-Outline/Delete"
-                    transform="translate(-3 -2)"
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20.426"
+                    height="20.423"
+                    viewBox="0 0 13.426 13.423"
                   >
-                    <g id="Delete" transform="translate(3 2)">
-                      <path
-                        id="Combined-Shape"
-                        d="M16.385,6.72a.751.751,0,0,1,.688.808c-.006.068-.548,6.779-.86,9.594a2.976,2.976,0,0,1-3.09,2.842C11.79,19.987,10.5,20,9.247,20c-1.355,0-2.676-.015-3.983-.042a2.967,2.967,0,0,1-3.018-2.829c-.315-2.84-.854-9.534-.859-9.6a.749.749,0,0,1,.687-.808.77.77,0,0,1,.808.687c0,.043.224,2.777.464,5.482l.048.54c.121,1.344.244,2.636.343,3.536a1.472,1.472,0,0,0,1.558,1.494c2.5.053,5.051.056,7.8.006a1.5,1.5,0,0,0,1.626-1.507c.31-2.794.85-9.482.856-9.55A.766.766,0,0,1,16.385,6.72ZM11.345,0a2.033,2.033,0,0,1,1.962,1.506l.254,1.261a.9.9,0,0,0,.865.722h3.282a.75.75,0,1,1,0,1.5H.75a.75.75,0,1,1,0-1.5H4.031l.1-.006A.9.9,0,0,0,4.9,2.767L5.14,1.551A2.043,2.043,0,0,1,7.112,0Zm0,1.5H7.112a.529.529,0,0,0-.512.392l-.233,1.17a2.38,2.38,0,0,1-.128.427h5.979a2.386,2.386,0,0,1-.128-.427l-.243-1.216A.524.524,0,0,0,11.345,1.5Z"
-                        fill-rule="evenodd"
-                      />
-                    </g>
-                  </g>
-                </svg>
-
-                Delete</a
-              >
-
-              <a
-                href="#"
-                class="text-gray-700 block px-4 py-2.5 text-sm font-light flex items-center hover:bg-gray-100 dark dark:hover:bg-gray-200"
-                v-if="role === 'st_group' && email !== summary.emailOwner"
-                @click="report()"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20.014"
-                  height="18.186"
-                  viewBox="0 0 20.014 18.186"
-                  style="margin-right: 15px; margin-left: 8px; width: 16px"
-                >
-                  <g
-                    id="Iconly_Light-Outline_Danger-Triangle"
-                    data-name="Iconly/Light-Outline/Danger-Triangle"
-                    transform="translate(-2 -3)"
-                  >
-                    <g id="Group-8" transform="translate(2 3)">
-                      <path
-                        id="Combined-Shape"
-                        d="M10.014,0a2.779,2.779,0,0,1,2.439,1.415l7.186,12.564a2.812,2.812,0,0,1-2.44,4.207H2.816A2.812,2.812,0,0,1,.375,13.979l7.2-12.566A2.777,2.777,0,0,1,10.013,0Zm0,1.5a1.3,1.3,0,0,0-1.138.659l-7.2,12.565a1.312,1.312,0,0,0,1.139,1.962H17.2a1.311,1.311,0,0,0,1.137-1.962L11.151,2.159A1.3,1.3,0,0,0,10.013,1.5Zm-.007,11a1,1,0,1,1-.01,0Zm0-5.935a.75.75,0,0,1,.75.75v3.1a.75.75,0,0,1-1.5,0v-3.1A.75.75,0,0,1,10,6.564Z"
-                        fill-rule="evenodd"
-                      />
-                    </g>
-                  </g>
-                </svg>
-
-                Report</a
-              >
+                    <path
+                      id="Icon_ionic-ios-close"
+                      data-name="Icon ionic-ios-close"
+                      d="M19.589,18l4.8-4.8A1.124,1.124,0,0,0,22.8,11.616l-4.8,4.8-4.8-4.8A1.124,1.124,0,1,0,11.616,13.2l4.8,4.8-4.8,4.8A1.124,1.124,0,0,0,13.2,24.384l4.8-4.8,4.8,4.8A1.124,1.124,0,1,0,24.384,22.8Z"
+                      transform="translate(-11.285 -11.289)"
+                    />
+                  </svg>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -753,45 +690,7 @@ const Login = () => appRouter.push({ name: "login" });
                     v-for="(comment, commentIndex) in commentofsummary"
                     :key="commentIndex"
                   >
-                    <div v-if="comment.isEditing" class="detail-comment">
-                      <img src="../assets/student.png" id="profile_comment" />
-
-                      <input
-                        class="edit-detail-comment-box"
-                        v-model.trim="comment.editingComment"
-                      /><br />
-
-                      <div
-                        class="button-edit-delete flex items-center"
-                        v-if="
-                          role === 'st_group' && email === comment.emailOwner
-                        "
-                      >
-                        <button
-                          v-if="
-                            role === 'st_group' && email === comment.emailOwner
-                          "
-                          class="save-comment flex items-center"
-                          @click="
-                            saveComment(comment.id, comment.editingComment)
-                          "
-                        >
-                          Save
-                        </button>
-                        <div class="line-edit-delete"></div>
-                        <button
-                          v-if="
-                            role === 'st_group' && email === comment.emailOwner
-                          "
-                          class="cancle-comment flex items-center"
-                          @click="cancelEdit(comment)"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </div>
-
-                    <div class="detail-comment" v-else>
+                    <div class="detail-comment">
                       <img src="../assets/student.png" id="profile_comment" />
 
                       <svg
@@ -848,88 +747,6 @@ const Login = () => appRouter.push({ name: "login" });
                         {{ comment.commentDetail }}
                       </div>
                       <br />
-
-                      <div
-                        class="button-edit-delete flex items-center"
-                        v-if="
-                          role === 'st_group' && email === comment.emailOwner
-                        "
-                      >
-                        <button
-                          v-if="
-                            role === 'st_group' && email === comment.emailOwner
-                          "
-                          class="edit-comment flex items-center"
-                          @click="editComment(comment)"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="19.5"
-                            height="18.94"
-                            viewBox="0 0 19.5 18.94"
-                            style="
-                              margin-right: 10px;
-                              margin-left: 8px;
-                              width: 16px;
-                            "
-                          >
-                            <g
-                              id="Iconly_Light-Outline_Edit"
-                              data-name="Iconly/Light-Outline/Edit"
-                              transform="translate(-2 -3)"
-                            >
-                              <g id="Edit" transform="translate(2 3)">
-                                <path
-                                  id="Combined-Shape"
-                                  d="M18.75,17.44a.75.75,0,0,1,0,1.5H11.5a.75.75,0,0,1,0-1.5ZM14.116.654l1.723,1.339A2.821,2.821,0,0,1,17.1,3.768a2.862,2.862,0,0,1-.368,2.2l-.015.022L16.712,6c-.068.089-.362.461-1.847,2.322a.591.591,0,0,1-.046.069.749.749,0,0,1-.081.09l-.321.4-.228.285L12.5,11.285l-.34.425L7.148,17.98a2.447,2.447,0,0,1-1.886.914l-3.639.046h-.01a.751.751,0,0,1-.73-.577L.064,14.892a2.371,2.371,0,0,1,.46-2.037L9.944,1.073l.011-.013A3,3,0,0,1,14.116.654ZM8.894,4.787l-7.2,9a.879.879,0,0,0-.171.755l.681,2.885,3.039-.038a.949.949,0,0,0,.733-.352l3.235-4.048.417-.521h0l.417-.522,3.109-3.891Zm2.216-2.77-1.279,1.6,4.261,3.271c.82-1.027,1.36-1.7,1.41-1.768a1.36,1.36,0,0,0,.142-1,1.411,1.411,0,0,0-.652-.887c-.071-.049-1.756-1.357-1.808-1.4A1.5,1.5,0,0,0,11.11,2.017Z"
-                                  fill="#19335a"
-                                  fill-rule="evenodd"
-                                />
-                              </g>
-                            </g>
-                          </svg>
-                          Edit
-                        </button>
-
-                        <div class="line-edit-delete"></div>
-
-                        <button
-                          v-if="
-                            role === 'staff_group' ||
-                            (role === 'st_group' &&
-                              email === comment.emailOwner)
-                          "
-                          class="delete-comment flex items-center"
-                          @click="deletecomment(comment.id)"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="18.458"
-                            height="20"
-                            viewBox="0 0 18.458 20"
-                            style="
-                              margin-right: 10px;
-                              margin-left: 8px;
-                              width: 15px;
-                            "
-                          >
-                            <g
-                              id="Iconly_Light-Outline_Delete"
-                              data-name="Iconly/Light-Outline/Delete"
-                              transform="translate(-3 -2)"
-                            >
-                              <g id="Delete" transform="translate(3 2)">
-                                <path
-                                  id="Combined-Shape"
-                                  d="M16.385,6.72a.751.751,0,0,1,.688.808c-.006.068-.548,6.779-.86,9.594a2.976,2.976,0,0,1-3.09,2.842C11.79,19.987,10.5,20,9.247,20c-1.355,0-2.676-.015-3.983-.042a2.967,2.967,0,0,1-3.018-2.829c-.315-2.84-.854-9.534-.859-9.6a.749.749,0,0,1,.687-.808.77.77,0,0,1,.808.687c0,.043.224,2.777.464,5.482l.048.54c.121,1.344.244,2.636.343,3.536a1.472,1.472,0,0,0,1.558,1.494c2.5.053,5.051.056,7.8.006a1.5,1.5,0,0,0,1.626-1.507c.31-2.794.85-9.482.856-9.55A.766.766,0,0,1,16.385,6.72ZM11.345,0a2.033,2.033,0,0,1,1.962,1.506l.254,1.261a.9.9,0,0,0,.865.722h3.282a.75.75,0,1,1,0,1.5H.75a.75.75,0,1,1,0-1.5H4.031l.1-.006A.9.9,0,0,0,4.9,2.767L5.14,1.551A2.043,2.043,0,0,1,7.112,0Zm0,1.5H7.112a.529.529,0,0,0-.512.392l-.233,1.17a2.38,2.38,0,0,1-.128.427h5.979a2.386,2.386,0,0,1-.128-.427l-.243-1.216A.524.524,0,0,0,11.345,1.5Z"
-                                  fill-rule="evenodd"
-                                />
-                              </g>
-                            </g>
-                          </svg>
-                          Delete
-                        </button>
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -1049,37 +866,6 @@ const Login = () => appRouter.push({ name: "login" });
               </div>
             </div>
           </div>
-
-          <p class="line-comment"></p>
-          <form @submit.prevent="sendComment(index, summary.id)">
-            <div class="box-comment">
-              <input
-                placeholder="แสดงความคิดเห็น ..."
-                class="input-comment"
-                v-model.trim="comments[index]"
-                required
-              />
-
-              <button class="button-sendcomment">
-                <svg
-                  id="Send"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20.756"
-                  height="20.69"
-                  viewBox="0 0 25.756 25.69"
-                >
-                  <path
-                    id="Fill-1"
-                    d="M11.63,15.57l4.83,7.817a.663.663,0,0,0,.675.32.671.671,0,0,0,.571-.489l6.04-20.348a.686.686,0,0,0-.176-.692A.678.678,0,0,0,22.894,2L2.479,7.966a.7.7,0,0,0-.172,1.257l7.927,4.944,7-7.059A.99.99,0,0,1,18.647,8.5Zm5.4,10.121a2.639,2.639,0,0,1-2.259-1.267L9.653,16.135,1.257,10.9a2.67,2.67,0,0,1,.664-4.827L22.337.108A2.667,2.667,0,0,1,25.644,3.43L19.6,23.777A2.636,2.636,0,0,1,17.4,25.665a2.878,2.878,0,0,1-.366.025Z"
-                    transform="translate(0 0)"
-                    fill="#fff"
-                    fill-rule="evenodd"
-                  />
-                </svg>
-                Comment
-              </button>
-            </div>
-          </form>
         </div>
 
         <div class="pagination">
@@ -1294,7 +1080,7 @@ const Login = () => appRouter.push({ name: "login" });
             />
           </g>
         </svg>
-        <span>No Summary</span>
+        <span>No Summary Hidden</span>
       </div>
 
       <!-- ส่วนของกล่อง review -->
@@ -1307,116 +1093,153 @@ const Login = () => appRouter.push({ name: "login" });
         >
           <!-- ส่วนของ dropdown เพื่อจะแก้ไข + ลบ -->
           <div class="dropdown">
-            <img
-              class="info"
-              src="../assets/info.png"
-              @click="() => toggleDropdown(index)"
-            />
+            <div
+              class="hidereview-detail flex items-center"
+              @click="togglePopupReview(review.id)"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+              >
+                <g
+                  id="Iconly_Bold_Info-Circle"
+                  data-name="Iconly/Bold/Info-Circle"
+                  transform="translate(-2 -1.999)"
+                >
+                  <g id="Info-Circle" transform="translate(2 1.999)">
+                    <path
+                      id="Path_199"
+                      data-name="Path 199"
+                      d="M10,0A10,10,0,1,1,0,10,10,10,0,0,1,10,0Zm0,12.931a.871.871,0,0,0-.87.87.875.875,0,1,0,.87-.87Zm0-7.6a.888.888,0,0,0-.88.88h0v4.42a.875.875,0,0,0,1.75,0h0V6.21A.88.88,0,0,0,10,5.33Z"
+                      fill="#c61d1e"
+                    />
+                  </g>
+                </g>
+              </svg><span class="text-sm font-light flex items-center"
+              >Detail</span
+            >
+            </div>
           </div>
 
-          <div class="dropdown-click">
-            <div
-              class="absolute right-3 z-12 mt-2 w-32 divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-              v-if="isDropdownOpen[index]"
-            >
-              <router-link
-                :to="{
-                  name: 'EditReview',
-                  params: { reviewid: review.id },
-                }"
-                tag="a"
-                class="text-gray-700 block px-4 py-2.5 text-sm font-light flex items-center hover:bg-gray-100 dark dark:hover:bg-gray-200"
-                v-if="role === 'st_group' && review.emailOwner === email"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="19.5"
-                  height="18.94"
-                  viewBox="0 0 19.5 18.94"
-                  style="margin-right: 15px; margin-left: 8px; width: 16px"
-                >
-                  <g
-                    id="Iconly_Light-Outline_Edit"
-                    data-name="Iconly/Light-Outline/Edit"
-                    transform="translate(-2 -3)"
+          <div
+            v-if="showPopuphide === review.id"
+            class="popup-container bg-black bg-opacity-20 backdrop-blur-sm"
+          >
+            <div class="popup">
+              <div class="popup-content">
+                <div v-if="hideofreview.length > 0">
+                  <div class="comment_header">Detail Hidden</div>
+                  <div class="line-comment-popup"></div>
+                  <div
+                    v-for="(hide, hideIndex) in hideofreview"
+                    :key="hideIndex"
                   >
-                    <g id="Edit" transform="translate(2 3)">
-                      <path
-                        id="Combined-Shape"
-                        d="M18.75,17.44a.75.75,0,0,1,0,1.5H11.5a.75.75,0,0,1,0-1.5ZM14.116.654l1.723,1.339A2.821,2.821,0,0,1,17.1,3.768a2.862,2.862,0,0,1-.368,2.2l-.015.022L16.712,6c-.068.089-.362.461-1.847,2.322a.591.591,0,0,1-.046.069.749.749,0,0,1-.081.09l-.321.4-.228.285L12.5,11.285l-.34.425L7.148,17.98a2.447,2.447,0,0,1-1.886.914l-3.639.046h-.01a.751.751,0,0,1-.73-.577L.064,14.892a2.371,2.371,0,0,1,.46-2.037L9.944,1.073l.011-.013A3,3,0,0,1,14.116.654ZM8.894,4.787l-7.2,9a.879.879,0,0,0-.171.755l.681,2.885,3.039-.038a.949.949,0,0,0,.733-.352l3.235-4.048.417-.521h0l.417-.522,3.109-3.891Zm2.216-2.77-1.279,1.6,4.261,3.271c.82-1.027,1.36-1.7,1.41-1.768a1.36,1.36,0,0,0,.142-1,1.411,1.411,0,0,0-.652-.887c-.071-.049-1.756-1.357-1.808-1.4A1.5,1.5,0,0,0,11.11,2.017Z"
-                        fill-rule="evenodd"
-                      />
-                    </g>
-                  </g>
-                </svg>
+                    <div class="detail-comment">
+                      <img src="../assets/student.png" id="profile_comment" />
 
-                Edit
-              </router-link>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="15.84"
+                        height="19.87"
+                        viewBox="0 0 15.84 19.87"
+                        class="user_comment"
+                      >
+                        <g
+                          id="Iconly_Light-Outline_Profile"
+                          data-name="Iconly/Light-Outline/Profile"
+                          transform="translate(-4 -2)"
+                        >
+                          <g id="Profile" transform="translate(4 2)">
+                            <path
+                              id="Combined-Shape"
+                              d="M15.84,16.193c0,3.3-4.52,3.677-7.919,3.677H7.678C5.512,19.865,0,19.728,0,16.173c0-3.229,4.338-3.66,7.711-3.677h.453C10.33,12.5,15.84,12.638,15.84,16.193ZM7.921,14C3.66,14,1.5,14.728,1.5,16.173s2.16,2.2,6.421,2.2,6.419-.732,6.419-2.177S12.181,14,7.921,14Zm0-14a5.31,5.31,0,0,1,0,10.619H7.889A5.31,5.31,0,0,1,7.921,0Zm0,1.428a3.882,3.882,0,0,0-.029,7.764l.029.714V9.192a3.882,3.882,0,0,0,0-7.764Z"
+                              fill-rule="evenodd"
+                              fill="#697A98"
+                            />
+                          </g>
+                        </g>
+                      </svg>
+                      <span class="username-comment">
+                        <!-- anonymous -->
+                        {{ hide.emailReportReview.slice(0, 5) }}
+                        <div class="dot"></div>
 
-              <a
-                href="#"
-                class="text-gray-700 block px-4 py-2.5 text-sm font-light flex items-center hover:bg-gray-100 dark dark:hover:bg-gray-200"
-                @click="() => deleteReview(review.id, index)"
-                v-if="
-                  role === 'staff_group' ||
-                  (role === 'st_group' && review.emailOwner === email)
-                "
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="18.458"
-                  height="20"
-                  viewBox="0 0 18.458 20"
-                  style="margin-right: 15px; margin-left: 8px; width: 15px"
+                        {{
+                          moment(hide.reportReviewCreatedOn).diff(
+                            moment(),
+                            "days"
+                          ) > -7
+                            ? moment(hide.reportReviewCreatedOn)
+                                .locale("th")
+                                .fromNow()
+                            : moment(hide.reportReviewCreatedOn)
+                                .locale("th")
+                                .format("DD MMMM YYYY")
+                        }}
+                      </span>
+
+                      <br /><br />
+                      <div
+                        class="detail-comment-box"
+                        v-if="hide.inappropriateReview === true"
+                      >
+                        <span
+                          class="bg-red-100 text-red-600 text-xs font-small me-2 px-2.5 py-0.5 rounded-md border border-red-400 pt-1 pb-1 pl-3 pr-3"
+                          >เนื้อหาไม่เหมาะสม</span
+                        >
+                      </div>
+                      <div
+                        class="detail-comment-box"
+                        v-if="hide.notMatchReview === true"
+                      >
+                        <span
+                          class="bg-yellow-100 text-yellow-600 text-xs font-small me-2 px-2.5 py-0.5 rounded-md border border-yellow-400 pt-1 pb-1 pl-3 pr-3"
+                          >เนื้อหาไม่ตรงกับรายวิชา</span
+                        >
+                      </div>
+                      <br />
+                    </div>
+                  </div>
+                </div>
+
+                <div v-else>
+                  <div class="comment_header">Detail Hidden</div>
+                  <div class="line-comment-popup"></div>
+
+                  <div class="detail-hidden-admin">
+                    โพสต์ของคุณถูกซ่อนโดย admin เนื่องจาก <br />
+                    <span style="font-weight: 500; color: #d20000"
+                      >มีเนื้อหาที่ไม่เหมาะสม</span
+                    >
+                    หรือ
+                    <span style="font-weight: 500; color: #d20000"
+                      >เนื้อหาไม่ตรงกับรายวิชา</span
+                    >
+                  </div>
+                </div>
+
+                <!-- Close Button -->
+                <div
+                  class="close-button"
+                  @click="togglePopupReview(review.id, false)"
                 >
-                  <g
-                    id="Iconly_Light-Outline_Delete"
-                    data-name="Iconly/Light-Outline/Delete"
-                    transform="translate(-3 -2)"
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20.426"
+                    height="20.423"
+                    viewBox="0 0 13.426 13.423"
                   >
-                    <g id="Delete" transform="translate(3 2)">
-                      <path
-                        id="Combined-Shape"
-                        d="M16.385,6.72a.751.751,0,0,1,.688.808c-.006.068-.548,6.779-.86,9.594a2.976,2.976,0,0,1-3.09,2.842C11.79,19.987,10.5,20,9.247,20c-1.355,0-2.676-.015-3.983-.042a2.967,2.967,0,0,1-3.018-2.829c-.315-2.84-.854-9.534-.859-9.6a.749.749,0,0,1,.687-.808.77.77,0,0,1,.808.687c0,.043.224,2.777.464,5.482l.048.54c.121,1.344.244,2.636.343,3.536a1.472,1.472,0,0,0,1.558,1.494c2.5.053,5.051.056,7.8.006a1.5,1.5,0,0,0,1.626-1.507c.31-2.794.85-9.482.856-9.55A.766.766,0,0,1,16.385,6.72ZM11.345,0a2.033,2.033,0,0,1,1.962,1.506l.254,1.261a.9.9,0,0,0,.865.722h3.282a.75.75,0,1,1,0,1.5H.75a.75.75,0,1,1,0-1.5H4.031l.1-.006A.9.9,0,0,0,4.9,2.767L5.14,1.551A2.043,2.043,0,0,1,7.112,0Zm0,1.5H7.112a.529.529,0,0,0-.512.392l-.233,1.17a2.38,2.38,0,0,1-.128.427h5.979a2.386,2.386,0,0,1-.128-.427l-.243-1.216A.524.524,0,0,0,11.345,1.5Z"
-                        fill-rule="evenodd"
-                      />
-                    </g>
-                  </g>
-                </svg>
-
-                Delete</a
-              >
-
-              <a
-                href="#"
-                class="text-gray-700 block px-4 py-2.5 text-sm font-light flex items-center hover:bg-gray-100 dark dark:hover:bg-gray-200"
-                v-if="role === 'st_group' && email !== review.emailOwner"
-                @click="report()"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20.014"
-                  height="18.186"
-                  viewBox="0 0 20.014 18.186"
-                  style="margin-right: 15px; margin-left: 8px; width: 16px"
-                >
-                  <g
-                    id="Iconly_Light-Outline_Danger-Triangle"
-                    data-name="Iconly/Light-Outline/Danger-Triangle"
-                    transform="translate(-2 -3)"
-                  >
-                    <g id="Group-8" transform="translate(2 3)">
-                      <path
-                        id="Combined-Shape"
-                        d="M10.014,0a2.779,2.779,0,0,1,2.439,1.415l7.186,12.564a2.812,2.812,0,0,1-2.44,4.207H2.816A2.812,2.812,0,0,1,.375,13.979l7.2-12.566A2.777,2.777,0,0,1,10.013,0Zm0,1.5a1.3,1.3,0,0,0-1.138.659l-7.2,12.565a1.312,1.312,0,0,0,1.139,1.962H17.2a1.311,1.311,0,0,0,1.137-1.962L11.151,2.159A1.3,1.3,0,0,0,10.013,1.5Zm-.007,11a1,1,0,1,1-.01,0Zm0-5.935a.75.75,0,0,1,.75.75v3.1a.75.75,0,0,1-1.5,0v-3.1A.75.75,0,0,1,10,6.564Z"
-                        fill-rule="evenodd"
-                      />
-                    </g>
-                  </g>
-                </svg>
-
-                Report</a
-              >
+                    <path
+                      id="Icon_ionic-ios-close"
+                      data-name="Icon ionic-ios-close"
+                      d="M19.589,18l4.8-4.8A1.124,1.124,0,0,0,22.8,11.616l-4.8,4.8-4.8-4.8A1.124,1.124,0,1,0,11.616,13.2l4.8,4.8-4.8,4.8A1.124,1.124,0,0,0,13.2,24.384l4.8-4.8,4.8,4.8A1.124,1.124,0,1,0,24.384,22.8Z"
+                      transform="translate(-11.285 -11.289)"
+                    />
+                  </svg>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1476,6 +1299,7 @@ const Login = () => appRouter.push({ name: "login" });
               v-if="review.categoryName === 'LNG'"
               >{{ review.courseName }} {{ review.courseFullName }}</span
             >
+
             <p class="instructor flex items-center">
               <svg
                 style="margin-right: 13px"
@@ -1937,18 +1761,13 @@ const Login = () => appRouter.push({ name: "login" });
             />
           </g>
         </svg>
-        No Review
+        No Review Hidden
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.dropdown {
-  float: right;
-  position: relative;
-}
-
 .info {
   width: 40px;
   margin-top: -10px;
@@ -2060,7 +1879,6 @@ const Login = () => appRouter.push({ name: "login" });
   height: 70px;
   margin-left: 10px;
   margin-top: 5px;
-  
 }
 
 #profile_comment {
@@ -2184,7 +2002,7 @@ const Login = () => appRouter.push({ name: "login" });
   z-index: 1;
   float: left;
   margin-top: 23px;
-  margin-left: 10px;
+  margin-left: 5px;
   margin-right: 20px;
 }
 
@@ -2381,6 +2199,28 @@ const Login = () => appRouter.push({ name: "login" });
   top: 50px;
 }
 
+.detail-hidden-admin {
+  display: block;
+  margin: auto;
+  position: relative;
+  width: 554px;
+  height: auto;
+  /* background: #f7f7fa 0% 0% no-repeat padding-box;
+  border: 1px solid #ededed; */
+  border-radius: 20px;
+  opacity: 1;
+  margin-bottom: 25px;
+  top: 160px;
+  padding: 50px;
+  font-size: 20px;
+  color: #666;
+  margin-bottom: 50px;
+  color: #697a98;
+  font: normal normal 400 18px/22px Anuphan;
+  letter-spacing: 1px;
+  line-height: 40px;
+}
+
 .edit-comment {
   height: 40px;
   width: 100px;
@@ -2471,7 +2311,7 @@ const Login = () => appRouter.push({ name: "login" });
   letter-spacing: 0px;
   color: #697a98;
   opacity: 1;
-  margin-left: 21%;
+  margin-left: 20%;
   margin-right: 30px;
   /* margin-bottom: 18px; */
   margin-top: 5px;
@@ -2542,18 +2382,6 @@ const Login = () => appRouter.push({ name: "login" });
   right: 50%;
   margin-top: 20px;
   transform: translate(-50%, -50%);
-}
-
-.toast-container {
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1000;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
 .no_comment {
@@ -2949,7 +2777,7 @@ const Login = () => appRouter.push({ name: "login" });
   border-radius: 8px;
   opacity: 1;
   margin-top: -73px;
-  margin-right: 30px;
+  margin-right: -100px;
   font-size: 13px;
   font-weight: 400;
   color: #697b98;
@@ -2978,5 +2806,70 @@ const Login = () => appRouter.push({ name: "login" });
   font-size: 13px;
   letter-spacing: 0.48px;
   padding-top: 5px;
+}
+
+.report-detail {
+  letter-spacing: 0.8px;
+  color: #d20000;
+  font-weight: 500;
+  /* padding-left: 10px; */
+  /* text-decoration: none; */
+  width: auto;
+  height: 35px;
+  /* UI Properties */
+  /* box-shadow: 0px 0px 15px #457aef0d; */
+  border: 1px solid #d20000;
+  padding-right: 10px;
+  border-radius: 10px;
+  opacity: 1;
+  float: right;
+  margin-top: 10px;
+}
+
+.report-detail:hover {
+  opacity: 0.5;
+  cursor: pointer;
+
+}
+
+.report-detail svg {
+  /* background-color: #2152a0; */
+  padding-left: 10px;
+  padding-right: 10px;
+  height: 40px;
+  width: 40px;
+}
+
+.hidereview-detail {
+  letter-spacing: 0.8px;
+  color: #d20000;
+  font-weight: 500;
+  /* padding-left: 10px; */
+  /* text-decoration: none; */
+  width: auto;
+  height: 35px;
+  /* UI Properties */
+  box-shadow: 0px 0px 15px #457aef0d;
+  border: 1px solid #d20000;
+  padding-right: 10px;
+  border-radius: 10px;
+  opacity: 1;
+  float: right;
+  margin-top: 90px;
+  margin-right: 10px;
+}
+
+.hidereview-detail:hover {
+  opacity: 0.5;
+  cursor: pointer;
+
+}
+
+.hidereview-detail svg {
+  /* background-color: #2152a0; */
+  padding-left: 10px;
+  padding-right: 10px;
+  height: 40px;
+  width: 40px;
 }
 </style>
