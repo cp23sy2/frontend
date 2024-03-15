@@ -14,7 +14,6 @@ import Mycategory from "../components/Mycategory.vue";
 import nopageComponent from '../views/NoPage.vue'
 import nopermissionComponent from '../views/NoPermission.vue'
 import Myhidden from '../components/Myhidden.vue';
-import MyhiddenStaff from '../components/MyhiddenStaff.vue';
 
 const history = createWebHistory("/sy2/");
 
@@ -95,12 +94,6 @@ const routes = [
     path: "/my-hidden",
     name: "Myhidden",
     component: Myhidden,
-    meta: { requiresAuth: true },
-  },
-  {
-    path: "/my-hidden-staff",
-    name: "MyhiddenStaff",
-    component: MyhiddenStaff,
     meta: { requiresAuth: true },
   },
   {
