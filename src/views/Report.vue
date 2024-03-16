@@ -195,7 +195,9 @@ const toggleDropdown = (index) => {
 
 const hidesummary = async (id) => {
   try {
-    const confirmed = confirm("Admin ต้องการซ่อนเนื้อหา report ส่วนนี้หรือไม่?");
+    const confirmed = confirm(
+      "Admin ต้องการซ่อนเนื้อหา report ส่วนนี้หรือไม่?"
+    );
 
     if (!confirmed) {
       return;
@@ -230,7 +232,9 @@ const hidesummary = async (id) => {
 
 const hidereview = async (id) => {
   try {
-    const confirmed = confirm("Admin ต้องการซ่อนเนื้อหา report ส่วนนี้หรือไม่?");
+    const confirmed = confirm(
+      "Admin ต้องการซ่อนเนื้อหา report ส่วนนี้หรือไม่?"
+    );
 
     if (!confirmed) {
       return;
@@ -263,7 +267,7 @@ const hidereview = async (id) => {
   }
 };
 
-const rejectsummary  = async (id) => {
+const rejectsummary = async (id) => {
   if (confirm("Admin ต้องการยกเลิก report เนื้อหานี้หรือไม่?") == true) {
     const response = await fetch(
       `${import.meta.env.VITE_BASE_URL}ReportCourseFile/${id}/summary`,
@@ -287,7 +291,7 @@ const rejectsummary  = async (id) => {
   }
 };
 
-const rejectreview  = async (id) => {
+const rejectreview = async (id) => {
   if (confirm("Admin ต้องการยกเลิก report เนื้อหานี้หรือไม่?") == true) {
     const response = await fetch(
       `${import.meta.env.VITE_BASE_URL}ReportReview/${id}/review`,
@@ -660,53 +664,12 @@ onBeforeMount(() => {
             class="report-detail flex items-center"
             @click="togglePopupSummary(summary.id)"
           >
-            <span class="text-sm font-light flex items-center"
-              > ({{ summary.reportSummaryCount }}) Report</span
+            <span class="text-sm font-light flex items-center">
+              <div class="count_report">{{ summary.reportSummaryCount }}</div>
+
+              Report</span
             >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="33"
-              height="33"
-              viewBox="0 0 33 33"
-              class="arrowreport"
-            >
-              <g
-                id="Icon_feather-arrow-right-circle"
-                data-name="Icon feather-arrow-right-circle"
-                transform="translate(-1.5 -1.5)"
-              >
-                <path
-                  id="Path_134"
-                  data-name="Path 134"
-                  d="M33,18A15,15,0,1,1,18,3,15,15,0,0,1,33,18Z"
-                  fill="none"
-                  stroke="#d20000"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="3"
-                />
-                <path
-                  id="Path_135"
-                  data-name="Path 135"
-                  d="M18,24l6-6-6-6"
-                  fill="none"
-                  stroke="#d20000"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="3"
-                />
-                <path
-                  id="Path_136"
-                  data-name="Path 136"
-                  d="M12,18H24"
-                  fill="none"
-                  stroke="#d20000"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="3"
-                />
-              </g>
-            </svg>
+            
           </div>
 
           <div
@@ -1050,7 +1013,6 @@ onBeforeMount(() => {
                 class="text-gray-700 block px-4 py-2.5 text-sm font-light flex items-center hover:bg-gray-100 dark dark:hover:bg-gray-200"
                 v-if="role === 'staff_group'"
                 @click="rejectreview(review.id)"
-
               >
                 <svg
                   style="margin-right: 15px; margin-left: 8px; width: 16px"
@@ -1231,53 +1193,11 @@ onBeforeMount(() => {
             class="report-detail-review flex items-center"
             @click="togglePopupReview(review.id)"
           >
-            <span class="text-sm font-light flex items-center"
-              >({{ review.reportReviewCount }}) Report</span
+            <span class="text-sm font-light flex items-center mr-2">
+              <div class="count_report">{{ review.reportReviewCount }}</div>
+              Report</span
             >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="33"
-              height="33"
-              viewBox="0 0 33 33"
-              class="arrowreport"
-            >
-              <g
-                id="Icon_feather-arrow-right-circle"
-                data-name="Icon feather-arrow-right-circle"
-                transform="translate(-1.5 -1.5)"
-              >
-                <path
-                  id="Path_134"
-                  data-name="Path 134"
-                  d="M33,18A15,15,0,1,1,18,3,15,15,0,0,1,33,18Z"
-                  fill="none"
-                  stroke="#d20000"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="3"
-                />
-                <path
-                  id="Path_135"
-                  data-name="Path 135"
-                  d="M18,24l6-6-6-6"
-                  fill="none"
-                  stroke="#d20000"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="3"
-                />
-                <path
-                  id="Path_136"
-                  data-name="Path 136"
-                  d="M12,18H24"
-                  fill="none"
-                  stroke="#d20000"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="3"
-                />
-              </g>
-            </svg>
+            
           </div>
 
           <div
@@ -1812,7 +1732,6 @@ onBeforeMount(() => {
   float: left;
   margin: 15px;
   margin-left: 20px;
-  
 }
 
 .title_summary {
@@ -2037,8 +1956,8 @@ onBeforeMount(() => {
   float: right;
   margin-top: 15px;
   margin-right: 15px;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding-left: 15px;
+  padding-right: 17px;
 }
 
 .report-detail:hover {
@@ -2067,10 +1986,9 @@ onBeforeMount(() => {
   opacity: 1;
   float: right;
   /* margin-top: 10px; */
-  margin-right: 15px;
   margin-right: 30px;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding-left: 15px;
+  padding-right: 10px;
 }
 
 .report-detail-review:hover {
@@ -2562,5 +2480,18 @@ onBeforeMount(() => {
   right: 50%;
   margin-top: 20px;
   transform: translate(-50%, -50%);
+}
+
+.count_report{
+  background-color: #d20000;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  color: white;
+  font-size: 12px;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  margin-right: 8px;
 }
 </style>
