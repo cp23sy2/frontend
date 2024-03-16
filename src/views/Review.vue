@@ -98,7 +98,7 @@ const filterCourses = () => {
 
     const categoryMatch = category === "all" || courseName.startsWith(category);
     const searchMatch = courseName.includes(search) || courseFullName.includes(search);
-    const hasPostMatch = showHasPost.value ? course.summariesCount > 0 : true;
+    const hasPostMatch = showHasPost.value ? course.reviewsCount > 0 : true;
 
     return categoryMatch && searchMatch && hasPostMatch;
   });
