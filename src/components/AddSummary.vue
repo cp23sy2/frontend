@@ -350,7 +350,7 @@ const Summary = () => appRouter.push({ name: "Summary" });
               !fileDescription || !selectedCourseId || !fileUpload || !title
             "
           >
-            Add Summary
+            Add
           </button>
 
           <button
@@ -402,21 +402,21 @@ button {
 .addSummary {
   background-color: #4675c0;
   height: 40px;
-  width: 135px;
+  width: 110px;
   border-radius: 10px;
   font-size: 14px;
   font-weight: 300;
   letter-spacing: 0.56px;
   color: white;
   margin-right: 30px;
-  margin-left: -60px;
+  margin-left: -40px;
 }
 
 .button-clear {
   background-color: white;
   border: solid 1px #4675c0;
   height: 40px;
-  width: 135px;
+  width: 110px;
   border-radius: 10px;
   font-size: 14px;
   font-weight: 300;

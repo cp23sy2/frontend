@@ -483,7 +483,7 @@ const Review = () => appRouter.push({ name: "Review" });
             !selectedCourseId
           "
         >
-          Add Review
+          Add
         </button>
 
         <button

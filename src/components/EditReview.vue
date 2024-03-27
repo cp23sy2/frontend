@@ -443,7 +443,7 @@ const Review = () => appRouter.go(-1);
             class="editReview"
             :disabled="isUnchanged || isFormEmpty"
           >
-            Edit Review</button
+            Edit</button
           >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
           <button

@@ -997,7 +997,7 @@ ul li:hover span {
   /* margin-left: 20px; */
   position: absolute;
   margin-left: -110px;
-  margin-top: 15px;
+  margin-top: 10px;
   width: 30px;
   height: 30px;
   /* background-color: #4675c0; */
@@ -1019,14 +1019,12 @@ ul li:hover span {
   text-align: center;
 
   padding-top: 1.7px;
-  position: absolute;
+  position: relative;
   margin-top: -32px;
   width: 23px;
   height: 20px;
   margin-left: 10px;
-  /* position: absolute; */
-  /* top: 0;
-  right: 0; */
+  top: -35px;
 }
 
 .noti_block {
