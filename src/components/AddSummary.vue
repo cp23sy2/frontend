@@ -4,7 +4,9 @@ import { useRouter } from "vue-router";
 import BackNavbar from "./BackNavbar.vue";
 import ToastSuccess from "../components/ToastSuccess.vue";
 import ToastError from "../components/ToastError.vue";
+import Spinner from "../components/Spinner.vue";
 
+const loading = ref(false);
 const showSuccess = ref(false);
 const showError = ref(false);
 const errorMessage = ref("Add Summary Failed");
@@ -90,6 +92,7 @@ onBeforeMount(async () => {
 });
 
 const addSummary = async () => {
+  loading.value = true;
   const formData = new FormData();
   formData.append("fileDescription", fileDescription.value);
   formData.append("emailOwner", email);
@@ -99,7 +102,6 @@ const addSummary = async () => {
 
   hasClickedEditButton.value = true;
 
-  // Validate before submitting the add
   if (!isInputValid()) {
     return;
   }
@@ -115,18 +117,27 @@ const addSummary = async () => {
 
     if (response.ok) {
       console.log("Summary added successfully!");
-      // alert("Summary add successfully!", "success");
-      showSuccess.value = true;
 
-      setTimeout(function () {
-        Summary();
-      }, 1500);
+      setTimeout(async function () {
+        loading.value = false; 
+
+        if (loading.value === false) {
+          showSuccess.value = true;
+          setTimeout(function () {
+            Summary(); 
+          }, 1500); 
+        }
+      }, 2000);
+
     } else {
       console.error("Failed to add summary");
       showError.value = true;
+      loading.value = false; 
     }
   } catch (error) {
     console.error("Error adding summary:", error);
+    showError.value = true;
+    loading.value = false;
   }
 };
 
@@ -213,6 +224,10 @@ const Summary = () => appRouter.push({ name: "Summary" });
       <div class="flex-container">
         <div class="line-review"></div>
         <p class="review">Add Summary</p>
+      </div>
+
+      <div v-if="loading">
+        <Spinner :loading="loading" />
       </div>
 
       <form @submit.prevent="addSummary" class="form-container">
@@ -312,14 +327,14 @@ const Summary = () => appRouter.push({ name: "Summary" });
 
         <div class="input-group">
           <label for="fileUpload" class="lable">File Upload</label> <br />
-            <input
-              type="file"
-              @change="handleFileUpload"
-              id="fileUpload"
-              required
-              name="file-input"
-              class="block w-80 text-sm text-gray-500 file:me-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gray-500 file:text-white hover:file:bg-gray-600 file:disabled:opacity-50 file:disabled:pointer-events-none "
-            />
+          <input
+            type="file"
+            @change="handleFileUpload"
+            id="fileUpload"
+            required
+            name="file-input"
+            class="block w-80 text-sm text-gray-500 file:me-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gray-500 file:text-white hover:file:bg-gray-600 file:disabled:opacity-50 file:disabled:pointer-events-none"
+          />
 
           <svg
             v-if="isFileSelected"
@@ -531,7 +546,7 @@ button {
   font-weight: 100;
   font-size: 10px;
   color: red;
-  display:inline-block;
+  display: inline-block;
 }
 
 #fileUpload {

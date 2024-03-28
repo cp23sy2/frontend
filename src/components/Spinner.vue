@@ -32,7 +32,7 @@ const props = defineProps({
   
 
   <!-- <div class="overlay fixed inset-0 bg-black bg-opacity-40 z-1000000" v-if="props.loading"></div> -->
-  <div class="overlay fixed inset-0  z-1000000" v-if="props.loading"></div>
+  <div class="overlay fixed inset-0 z-1000000" v-if="props.loading"></div>
 
 
 </template>

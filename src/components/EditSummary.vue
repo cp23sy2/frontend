@@ -4,7 +4,9 @@ import { useRoute, useRouter } from "vue-router";
 import BackNavbar from "./BackNavbar.vue";
 import ToastSuccess from "../components/ToastSuccess.vue";
 import ToastError from "../components/ToastError.vue";
+import Spinner from "../components/Spinner.vue";
 
+const loading = ref(false);
 const showSuccess = ref(false);
 const showError = ref(false);
 const errorMessage = ref("Edit Summary Failed");
@@ -148,6 +150,7 @@ const isDataChanged = computed(() => {
 });
 
 const saveChanges = async () => {
+  loading.value = true;
   hasClickedEditButton.value = true;
 
   // Validate before submitting the edit
@@ -159,12 +162,10 @@ const saveChanges = async () => {
     if (summaryData.value) {
       const formData = new FormData();
 
-      // Check if a new file is selected
       if (fileUpload.value) {
         formData.append("fileUpload", fileUpload.value);
       }
 
-      // Update this line based on your server's expectations
       formData.append("fileDescription", summaryData.value.fileDescription);
       formData.append("title", summaryData.value.title);
       formData.append("hide", summaryData.value.hide);
@@ -183,18 +184,27 @@ const saveChanges = async () => {
       if (saveResponse.ok) {
         console.log("บันทึกสำเร็จ");
         successMessage.value = "Edit Summary Success";
-        showSuccess.value = true;
 
-        setTimeout(function () {
-          Summary();
-        }, 1500);
+        setTimeout(async function () {
+        loading.value = false; 
+
+        if (loading.value === false) {
+          showSuccess.value = true;
+          setTimeout(function () {
+            Summary(); 
+          }, 1500); 
+        }
+      }, 2000);
       } else {
         console.error("ไม่สามารถบันทึกข้อมูลได้");
         showError.value = true;
       }
     }
-  } catch (error) {
-    console.error("เกิดข้อผิดพลาดในการบันทึกข้อมูล:", error);
+  }
+  catch (error) {
+    console.error("Error adding summary:", error);
+    showError.value = true;
+    loading.value = false;
   }
 };
 
@@ -245,6 +255,10 @@ onMounted(() => {
       <div class="flex-container">
         <div class="line-review"></div>
         <p class="review">Edit Summary</p>
+      </div>
+
+      <div v-if="loading">
+        <Spinner :loading="loading" />
       </div>
 
       <div class="form-container">

@@ -4,7 +4,9 @@ import { useRouter } from "vue-router";
 import BackNavbar from "./BackNavbar.vue";
 import ToastSuccess from "../components/ToastSuccess.vue";
 import ToastError from "../components/ToastError.vue";
+import Spinner from "../components/Spinner.vue";
 
+const loading = ref(false);
 const showSuccess = ref(false);
 const showError = ref(false);
 const errorMessage = ref("Add Review Failed");
@@ -71,9 +73,9 @@ onBeforeMount(async () => {
 });
 
 const addReview = async () => {
+  loading.value = true;
   hasClickedEditButton.value = true;
 
-  // Validate before submitting the add
   if (!isInputValid()) {
     return;
   }
@@ -105,10 +107,16 @@ const addReview = async () => {
     });
 
     if (response.ok) {
-      showSuccess.value = true;
-      setTimeout(function () {
-        Review();
-      }, 1500);
+      setTimeout(async function () {
+        loading.value = false; 
+
+        if (loading.value === false) {
+          showSuccess.value = true;
+          setTimeout(function () {
+            Review();
+          }, 1500); 
+        }
+      }, 2000);
     } else {
       showError.value = true;
     }
@@ -214,6 +222,10 @@ const Review = () => appRouter.push({ name: "Review" });
       <div class="flex-container">
         <div class="line-review"></div>
         <p class="review">Add Review</p>
+      </div>
+
+      <div v-if="loading">
+        <Spinner :loading="loading" />
       </div>
 
       <form @submit.prevent="addReview" class="form-container">
