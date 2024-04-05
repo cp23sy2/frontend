@@ -14,6 +14,16 @@ const comments = ref([]);
 const commentofsummary = ref([]);
 const hideofsummary = ref([]);
 const hideofreview = ref([]);
+const isDropdownOpen = ref([]);
+
+const toggleDropdown = (index) => {
+  // ตรวจสอบว่า Object มีค่าหรือยัง ถ้าไม่มีให้สร้าง Object ใหม่
+  if (!isDropdownOpen.value[index]) {
+    isDropdownOpen.value[index] = false;
+  }
+  isDropdownOpen.value[index] = !isDropdownOpen.value[index];
+};
+
 
 const currentPageSummary = ref(1);
 const currentPageReview = ref(1);
@@ -235,6 +245,80 @@ const getreview = async () => {
   }
 };
 
+const hidesummary = async (id) => {
+  try {
+    const confirmed = confirm(
+      "Admin ต้องการยกเลิกซ่อนเนื้อหา summary ส่วนนี้หรือไม่?"
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    const response = await fetch(
+      `${import.meta.env.VITE_BASE_URL}summary/${id}/hide`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      }
+    );
+
+    if (response.ok) {
+      getsummary();
+      alert("Admin ยกเลิกการซ่อนเนื้อหาแล้ว");
+
+      const currentReviewsCount = summarys.value.length;
+      if (currentReviewsCount === 1) {
+        window.location.reload();
+      }
+    } else {
+      showError.value = true;
+    }
+  } catch (error) {
+    console.error("เกิดข้อผิดพลาดในการยกเลิกซ่อนข้อมูล:", error);
+  }
+};
+
+const hidereview = async (id) => {
+  try {
+    const confirmed = confirm(
+      "Admin ต้องการยกเลิกซ่อนเนื้อหา report ส่วนนี้หรือไม่?"
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    const response = await fetch(
+      `${import.meta.env.VITE_BASE_URL}review/${id}/hide`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      }
+    );
+
+    if (response.ok) {
+      getreview();
+      alert("Admin ยกเลิกการซ่อนเนื้อหาแล้ว");
+      // window.location.reload();
+      const currentReviewsCount = reviews.value.length;
+      if (currentReviewsCount === 1) {
+        window.location.reload();
+      }
+    } else {
+      showError.value = true;
+    }
+  } catch (error) {
+    console.error("เกิดข้อผิดพลาดในการยกเลิกซ่อนข้อมูล:", error);
+  }
+};
+
 const getDownloadLink = (fileName) => {
   return `${import.meta.env.VITE_BASE_URL}files/${fileName}`;
 };
@@ -387,11 +471,55 @@ const Login = () => appRouter.push({ name: "login" });
           paginatedItemsSummary.length > 0
         "
       >
+
         <div
           class="review-box"
           v-for="(summary, index) in paginatedItemsSummary"
           :key="summary.id"
         >
+
+         <!-- ส่วนของ dropdown เพื่อจะแก้ไข + ลบ -->
+      <div class="dropdownreview" v-if="role === 'staff_group'">
+            <img
+              class="inforeport"
+              src="../assets/info.png"
+              @click="() => toggleDropdown(index)"
+            />
+          </div>
+
+          <div class="dropdown-click">
+            <div
+              class="absolute right-3 z-12 mt-2 w-46 divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+              v-if="isDropdownOpen[index]"
+            >
+              <a
+                href="#"
+                class="text-gray-700 block px-4 py-2.5 text-sm font-light flex items-center hover:bg-gray-100 dark dark:hover:bg-gray-200"
+                @click="hidesummary(summary.id)"
+                >
+              <svg
+                  style="margin-right: 10px; margin-left: 2px; width: 16px"
+                  width="20"
+                  height="17.273"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="9"
+                    stroke="#33363F"
+                    stroke-width="2"
+                  />
+                  <path d="M18 18L6 6" stroke="#33363F" stroke-width="2" />
+                </svg>
+
+                Cancle Hide</a
+              >
+              </div>
+          </div>
+
           <!-- ส่วนของ dropdown เพื่อจะแก้ไข + ลบ -->
           <div class="dropdown">
             <div
@@ -1095,6 +1223,48 @@ const Login = () => appRouter.push({ name: "login" });
           v-for="(review, index) in paginatedItemsReview"
           :key="review.id"
         >
+
+         <!-- ส่วนของ dropdown เพื่อจะแก้ไข + ลบ -->
+      <div class="dropdownreview" v-if="role === 'staff_group'">
+            <img
+              class="inforeport"
+              src="../assets/info.png"
+              @click="() => toggleDropdown(index)"
+            />
+          </div>
+
+          <div class="dropdown-click">
+            <div
+              class="absolute right-3 z-12 mt-2 w-46 divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+              v-if="isDropdownOpen[index]"
+            >
+              <a
+              @click="hidereview(review.id)"
+                href="#"
+                class="text-gray-700 block px-4 py-2.5 text-sm font-light flex items-center hover:bg-gray-100 dark dark:hover:bg-gray-200"
+              >
+              <svg
+                  style="margin-right: 10px; margin-left: 2px; width: 16px"
+                  width="20"
+                  height="17.273"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="9"
+                    stroke="#33363F"
+                    stroke-width="2"
+                  />
+                  <path d="M18 18L6 6" stroke="#33363F" stroke-width="2" />
+                </svg>
+
+                Cancle Hide</a
+              >
+              </div>
+          </div>
           <!-- ส่วนของ dropdown เพื่อจะแก้ไข + ลบ -->
           <div class="dropdown">
             <div
@@ -2831,7 +3001,8 @@ const Login = () => appRouter.push({ name: "login" });
   border-radius: 10px;
   opacity: 1;
   float: right;
-  margin-top: 10px;
+  margin-top:5px;
+  margin-right: 13px;
 }
 
 .report-detail:hover {
@@ -2878,4 +3049,27 @@ const Login = () => appRouter.push({ name: "login" });
   height: 40px;
   width: 40px;
 }
+
+.inforeport {
+  width: 40px;
+  margin-top: 12px;
+  margin-right: 0px;
+  margin-left: 35%;
+  z-index: 2;
+}
+
+.inforeport:hover {
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+.dropdownreview {
+  float: right;
+  position: relative;
+  margin-top: -10px;
+  margin-left: -20px;
+  /* display: inline-block; */
+  /* position: relative; */
+}
+
 </style>

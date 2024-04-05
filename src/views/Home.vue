@@ -310,12 +310,12 @@ const Login = () => appRouter.push({ name: "login" });
               data-name="summary information and review "
               transform="translate(419 224)"
               fill="#fff"
-              font-size="26"
+              font-size="24"
               font-family="Poppins-Bold, Poppins"
               font-weight="700"
               letter-spacing="0.05em"
             >
-              <tspan x="0" y="0">summary information and review</tspan>
+              <tspan x="0" y="0">Summary Information and Review</tspan>
             </text>
             <text
               id="in_the_faculty_of_information_Technology"
@@ -328,7 +328,7 @@ const Login = () => appRouter.push({ name: "login" });
               letter-spacing="0.05em"
             >
               <tspan x="0" y="0">
-                in the faculty of information Technology
+                in the School of Information Technology
               </tspan>
             </text>
             <g

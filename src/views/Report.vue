@@ -503,7 +503,7 @@ onBeforeMount(() => {
 
           <div class="dropdown-click">
             <div
-              class="absolute right-3 z-12 mt-2 w-32 divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+              class="absolute right-3 z-12 mt-2 w-46 divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
               v-if="isDropdownOpen[index]"
             >
               <a
@@ -534,7 +534,7 @@ onBeforeMount(() => {
                   </g>
                 </svg>
 
-                Hide</a
+                Hide Summary</a
               >
 
               <a
@@ -561,7 +561,7 @@ onBeforeMount(() => {
                   <path d="M18 18L6 6" stroke="#33363F" stroke-width="2" />
                 </svg>
 
-                Reject</a
+                Cancel</a
               >
             </div>
           </div>
@@ -975,7 +975,7 @@ onBeforeMount(() => {
 
           <div class="dropdown-click">
             <div
-              class="absolute right-3 z-12 mt-2 w-32 divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+              class="absolute right-3 z-12 mt-2 w-46 divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
               v-if="isDropdownOpen[index]"
             >
               <a
@@ -1006,7 +1006,7 @@ onBeforeMount(() => {
                   </g>
                 </svg>
 
-                Hide</a
+                Hide Review</a
               >
               <a
                 href="#"
@@ -1032,7 +1032,7 @@ onBeforeMount(() => {
                   <path d="M18 18L6 6" stroke="#33363F" stroke-width="2" />
                 </svg>
 
-                Reject</a
+                Cancel</a
               >
             </div>
           </div>

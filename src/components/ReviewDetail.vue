@@ -413,7 +413,7 @@ const Login = () => appRouter.push({ name: "login" });
 
         <div class="dropdown-click">
           <div
-            class="absolute right-3 z-12 mt-2 w-32 divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+            class="absolute right-3 z-12 mt-2 w-46 divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
             v-if="isDropdownOpen[index]"
           >
             <router-link
@@ -430,7 +430,7 @@ const Login = () => appRouter.push({ name: "login" });
                 width="19.5"
                 height="18.94"
                 viewBox="0 0 19.5 18.94"
-                style="margin-right: 15px; margin-left: 8px; width: 16px"
+                style="margin-right: 15px; margin-left: 6px; width: 16px"
               >
                 <g
                   id="Iconly_Light-Outline_Edit"
@@ -461,7 +461,7 @@ const Login = () => appRouter.push({ name: "login" });
                 width="18.458"
                 height="20"
                 viewBox="0 0 18.458 20"
-                style="margin-right: 15px; margin-left: 8px; width: 15px"
+                style="margin-right: 15px; margin-left: 6px; width: 15px"
               >
                 <g
                   id="Iconly_Light-Outline_Delete"
@@ -492,7 +492,7 @@ const Login = () => appRouter.push({ name: "login" });
                 width="20"
                 height="17.273"
                 viewBox="0 0 20 17.273"
-                style="margin-right: 15px; margin-left: 8px; width: 16px"
+                style="margin-right: 15px; margin-left: 2px; width: 16px"
               >
                 <g
                   id="Iconly_Light-Outline_Hide"
@@ -509,7 +509,7 @@ const Login = () => appRouter.push({ name: "login" });
                 </g>
               </svg>
 
-              Hide</a
+              Hide Review</a
             >
 
             <a
@@ -523,7 +523,7 @@ const Login = () => appRouter.push({ name: "login" });
                 width="20.014"
                 height="18.186"
                 viewBox="0 0 20.014 18.186"
-                style="margin-right: 15px; margin-left: 8px; width: 16px"
+                style="margin-right: 15px; margin-left: 4px; width: 16px"
               >
                 <g
                   id="Iconly_Light-Outline_Danger-Triangle"
