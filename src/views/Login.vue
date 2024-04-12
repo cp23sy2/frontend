@@ -99,7 +99,7 @@ const Home = () => appRouter.push({ name: "Home" });
             class="login"
             :disabled="!username || !password"
           >
-            Login
+            Login Ja
           </button>
         </form>
       </div>
